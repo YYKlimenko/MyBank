@@ -1,0 +1,9 @@
+*.py[code]
+__pycache__/
+venv/
+.idea/
+.pytest_cache/
+*.mypy_cache
+settings.py
+db.sqlite3
+MyBank/app/migrations/000*
