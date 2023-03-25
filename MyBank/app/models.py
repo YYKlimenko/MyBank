@@ -23,7 +23,7 @@ class Account(models.Model):
 
 class Property(models.Model):
     user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, related_name='properties')
-    name = models.CharField(max_length=4, unique=True, primary_key=True)
+    name = models.CharField(max_length=25, unique=True, primary_key=True)
     description = models.CharField(max_length=25, null=True)
     value = models.DecimalField(max_digits=12, decimal_places=5)
 

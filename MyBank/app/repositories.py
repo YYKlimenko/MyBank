@@ -10,7 +10,7 @@ from app.models import Currency, Account
 class RepositoryProtocol(Protocol):
     model: models.Model = ...
 
-    def get(self, many: bool = False, **filter_fields) -> QuerySet:
+    def get(self, many: bool = False, prefetch_all=False, **filter_fields) -> QuerySet:
         ...
 
     def post(self, fields: dict[str, Any]) -> None:

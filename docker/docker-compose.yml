@@ -1,12 +1,102 @@
 version: "2.1"
+
 services:
-  rabbitmq:
+
+  queue:
     image: rabbitmq:3.10.7-management
     hostname: rabbitmq
-    restart: always
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
     environment:
       - RABBITMQ_DEFAULT_USER=rmuser
       - RABBITMQ_DEFAULT_PASS=rmpassword
     ports:
-      - 15672:15672
-      - 5672:5672
+      - '15672:15672'
+      - '5672:5672'
+
+  db:
+    build:
+      context: .
+      dockerfile: DockerfileDB
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: 'YuraMarketPassword___1984'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  migrate:
+      build:
+        context: ..
+        dockerfile: ./docker/DockerfileBackend
+      image: app
+      entrypoint: ['python', 'MyBank/manage.py', 'migrate']
+      depends_on:
+        db:
+          condition: service_healthy
+      user: backend
+
+  super_user_creator:
+    image: app
+    environment:
+      DJANGO_SUPERUSER_PASSWORD:  admin
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_EMAIL: admin@admin.com
+    entrypoint: ['python', 'MyBank/manage.py', 'createsuperuser', '--no-input']
+    depends_on:
+      migrate:
+        condition: service_started
+      db:
+        condition: service_healthy
+    user: backend
+
+  app:
+      image: app
+      ports:
+        - '8000:8000'
+      entrypoint: /bin/bash -c 'cd MyBank && gunicorn MyBank.wsgi:application --bind 0.0.0.0:8000'
+      volumes:
+        - static:/backend/MyBank/static
+      depends_on:
+        - super_user_creator
+      user: backend
+
+  worker:
+    image: app
+    entrypoint: /bin/bash -c 'cd MyBank && celery -A MyBank worker -l INFO'
+    depends_on:
+      queue:
+        condition: service_healthy
+    user: backend
+
+  schedule:
+      image: app
+      entrypoint: /bin/bash -c 'cd MyBank && celery -A MyBank beat -l INFO'
+      depends_on:
+        queue:
+          condition: service_healthy
+
+  proxy-server:
+      build:
+        context: .
+        dockerfile: DockerfileNginx
+      ports:
+        - '80:80'
+      volumes:
+        - static:/home/static/
+      depends_on:
+        - app
+
+
+volumes:
+  data:
+  static:

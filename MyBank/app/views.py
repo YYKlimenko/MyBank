@@ -1,8 +1,5 @@
-from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.fields import IntegerField
-from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -64,13 +61,19 @@ class UserView(BaseView):
 def count_sum(request, *args, **kwargs):
     user = UserRepository().get(id=kwargs['user_id'], prefetch_all=True)
     accounts = user.accounts.all()
+    properties = user.properties.all()
     sum_ = 0
+
     for i in accounts:
         sum_ += i.currency.value * i.count
+
+    for i in properties:
+        sum_ += i.value
+
     return JsonResponse(
         {
             'user': user.username,
-            'RUB': sum_
+            'RUB': sum_,
         }
     )
 
