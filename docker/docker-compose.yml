@@ -57,6 +57,13 @@ services:
       db:
         condition: service_healthy
 
+  collect_static:
+    image: app
+    entrypoint: ['python', 'MyBank/manage.py', 'collectstatic']
+    depends_on:
+      super_user_creator:
+        condition: service_started
+
   update_currencies:
     image: app
     entrypoint: ['python', 'MyBank/manage.py', 'update_currencies']
