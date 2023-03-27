@@ -4,20 +4,22 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import QuerySet
 
+from MyBank.metaclasses import Bean
 from app.models import Currency, Account
 
 
 class RepositoryProtocol(Protocol):
-    model: models.Model = ...
+    model: models.Model | Any = ...
 
     def get(self, many: bool = False, prefetch_all=False, **filter_fields) -> QuerySet:
         ...
 
-    def post(self, fields: dict[str, Any]) -> None:
+    def post(self, **fields) -> None:
         ...
 
 
-class AbstractRepository(RepositoryProtocol):
+class AbstractRepository(metaclass=Bean):
+    model: models.Model | Any = ...
 
     def get(self, many: bool = False, prefetch_all=False, **filter_fields) -> QuerySet:
         instances = self.model.objects.filter(**filter_fields).select_related()
@@ -25,7 +27,7 @@ class AbstractRepository(RepositoryProtocol):
             instances = instances.prefetch_related()
         return instances if many else instances[0]
 
-    def post(self, fields: dict[str, Any]) -> None:
+    def post(self, **fields) -> None:
         instance = self.model(**fields)
         instance.save()
 

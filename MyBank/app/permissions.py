@@ -1,8 +1,15 @@
-from django.http import HttpResponseForbidden
+from rest_framework import permissions
 
 
-def is_admin_or_owner(current_user, owner_id):
-    if current_user.is_staff or current_user.id == owner_id:
-        return True
-    else:
-        return HttpResponseForbidden()
+class IsAdminOrUser(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user and (request.user.is_staff or request.user.id == request.query_params.get('id')):
+            return True
+
+
+class IsAdminOrOwner(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user and (request.user.is_staff or request.user.id == request.query_params.get('user_id')):
+            return True

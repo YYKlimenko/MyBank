@@ -1,11 +1,10 @@
 from django.http import JsonResponse, HttpResponse
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-from .permissions import is_admin_or_owner
+from .permissions import IsAdminOrOwner, IsAdminOrUser
 from .repositories import CurrencyRepository, AccountRepository, UserRepository
 from .serializers import CurrencySerializer, AccountSerializer, CreatingAccountSerializer, UserSerializer, \
     QuerySerializer
@@ -15,31 +14,25 @@ class BaseView(APIView):
     serializer = ...
     repository = ...
 
-    def _get(self, instance, many=False):
-        return self.serializer(instance, many=many).data
+    def get(self, request, *args, **kwargs):
+        filter_fields = {key: request.query_params[key] for key in request.query_params}
+        instances = self.repository.get(**filter_fields, many=True)
+        return Response(status=200, data=self.serializer(instances, many=True).data)
 
 
 class CurrencyView(BaseView):
     serializer = CurrencySerializer
     repository = CurrencyRepository()
 
-    def get(self, request, *args, **kwargs):
-        filter_fields = {key: request.query_params[key] for key in request.query_params}
-        currency = self.repository.get(**filter_fields, many=True)
-        return Response(status=200, data=self._get(currency, True))
-
 
 class AccountView(BaseView):
     serializer = AccountSerializer
     repository = AccountRepository()
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOrOwner]
 
     @swagger_auto_schema(query_serializer=QuerySerializer)
     def get(self, request, *args, **kwargs):
-        filter_fields = {key: request.query_params[key] for key in request.query_params}
-        is_admin_or_owner(request.user, filter_fields.get('user_id'))
-        queryset = self.repository.get(**filter_fields, many=True)
-        return Response(status=200, data=self._get(queryset, True))
+        return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=CreatingAccountSerializer)
     def post(self, request, *args, **kwargs):
@@ -50,12 +43,7 @@ class AccountView(BaseView):
 class UserView(BaseView):
     serializer = UserSerializer
     repository = UserRepository()
-
-    def get(self, request, *args, **kwargs):
-        filter_fields = {key: request.query_params[key] for key in request.query_params}
-        is_admin_or_owner(request.user, filter_fields.get('id'))
-        accounts = self.repository.get(**filter_fields, many=True)
-        return Response(status=200, data=self._get(accounts, True))
+    permission_classes = [IsAdminOrUser]
 
 
 def count_sum(request, *args, **kwargs):

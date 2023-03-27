@@ -8,8 +8,8 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
-    'add-every-1800-seconds': {
-        'task': 'app.tasks.update_btc',
-        'schedule': 600,
+    'add-every-120-seconds': {
+        'task': 'app.tasks.update',
+        'schedule': 300,
     },
 }

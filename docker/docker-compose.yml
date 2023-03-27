@@ -43,7 +43,6 @@ services:
       depends_on:
         db:
           condition: service_healthy
-      user: backend
 
   super_user_creator:
     image: app
@@ -57,7 +56,15 @@ services:
         condition: service_started
       db:
         condition: service_healthy
-    user: backend
+
+  update_currencies:
+    image: app
+    entrypoint: ['python', 'MyBank/manage.py', 'update_currencies']
+    depends_on:
+      migrate:
+        condition: service_started
+      db:
+        condition: service_healthy
 
   app:
       image: app
