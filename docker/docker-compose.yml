@@ -63,6 +63,8 @@ services:
     depends_on:
       super_user_creator:
         condition: service_started
+    volumes:
+      - static:/backend/MyBank/static
 
   update_currencies:
     image: app
@@ -78,10 +80,9 @@ services:
       ports:
         - '8000:8000'
       entrypoint: /bin/bash -c 'cd MyBank && gunicorn MyBank.wsgi:application --bind 0.0.0.0:8000'
-      volumes:
-        - static:/backend/MyBank/static
       depends_on:
         - super_user_creator
+        - collect_static
       user: backend
 
   worker:
