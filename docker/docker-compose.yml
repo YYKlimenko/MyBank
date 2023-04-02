@@ -1,4 +1,4 @@
-version: "2.1"
+version: '3.9'
 
 services:
 
@@ -34,11 +34,23 @@ services:
     volumes:
       - data:/var/lib/postgresql/data
 
+
+  app:
+    build:
+      context: ..
+      dockerfile: ./docker/DockerfileBackend
+    env_file:
+      - .env
+    ports:
+      - '8000:8000'
+    entrypoint: /bin/bash -c 'cd MyBank && gunicorn MyBank.wsgi:application --bind 0.0.0.0:8000'
+    user: backend
+
+
   migrate:
-      build:
-        context: ..
-        dockerfile: ./docker/DockerfileBackend
       image: app
+      env_file:
+        - .env
       entrypoint: ['python', 'MyBank/manage.py', 'migrate']
       depends_on:
         db:
@@ -46,47 +58,40 @@ services:
 
   super_user_creator:
     image: app
-    environment:
-      DJANGO_SUPERUSER_PASSWORD:  admin
-      DJANGO_SUPERUSER_USERNAME: admin
-      DJANGO_SUPERUSER_EMAIL: admin@admin.com
+    env_file:
+      - .env
     entrypoint: ['python', 'MyBank/manage.py', 'createsuperuser', '--no-input']
     depends_on:
       migrate:
-        condition: service_started
-      db:
-        condition: service_healthy
+        condition: service_completed_successfully
 
   collect_static:
     image: app
+    env_file:
+      - .env
     entrypoint: ['python', 'MyBank/manage.py', 'collectstatic']
     depends_on:
       super_user_creator:
-        condition: service_started
+          condition: service_completed_successfully
     volumes:
       - static:/backend/MyBank/static
 
   update_currencies:
     image: app
+    env_file:
+      - .env
     entrypoint: ['python', 'MyBank/manage.py', 'update_currencies']
     depends_on:
       migrate:
-        condition: service_started
-      db:
-        condition: service_healthy
-
-  app:
-      image: app
-      ports:
-        - '8000:8000'
-      entrypoint: /bin/bash -c 'cd MyBank && gunicorn MyBank.wsgi:application --bind 0.0.0.0:8000'
-      depends_on:
-        - super_user_creator
-        - collect_static
-      user: backend
+        condition: service_completed_successfully
 
   worker:
     image: app
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: "${PYTHONPATH}:/backend/MyBank/"
+    entrypoint: ['celery', '-A', 'MyBank', 'workler', '-l', 'INFO']
     entrypoint: /bin/bash -c 'cd MyBank && celery -A MyBank worker -l INFO'
     depends_on:
       queue:
@@ -95,6 +100,8 @@ services:
 
   schedule:
       image: app
+      env_file:
+        - .env
       entrypoint: /bin/bash -c 'cd MyBank && celery -A MyBank beat -l INFO'
       depends_on:
         queue:
@@ -109,7 +116,8 @@ services:
       volumes:
         - static:/home/static/
       depends_on:
-        - app
+        app:
+          condition: service_started
 
 
 volumes:

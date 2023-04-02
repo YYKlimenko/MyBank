@@ -8,6 +8,7 @@ from .permissions import IsAdminOrOwner, IsAdminOrUser
 from .repositories import CurrencyRepository, AccountRepository, UserRepository
 from .serializers import CurrencySerializer, AccountSerializer, CreatingAccountSerializer, UserSerializer, \
     QuerySerializer
+from .services.services import UserService, CRUD, Counter
 
 
 class BaseView(APIView):
@@ -47,25 +48,5 @@ class UserView(BaseView):
 
 
 def count_sum(request, *args, **kwargs):
-    user = UserRepository().get(id=kwargs['user_id'], prefetch_all=True)
-    accounts = user.accounts.all()
-    properties = user.properties.all()
-    sum_ = 0
-
-    for i in accounts:
-        sum_ += i.currency.value * i.count
-
-    for i in properties:
-        sum_ += i.value
-
-    return JsonResponse(
-        {
-            'user': user.username,
-            'RUB': sum_,
-        }
-    )
-
-
-
-
-
+    service = UserService(CRUD(UserRepository()), Counter())
+    return JsonResponse(service.get_sum(user_id=kwargs['user_id']))

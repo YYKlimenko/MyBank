@@ -6,11 +6,6 @@ RUN pip install --upgrade pip
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV DB_LOGIN 'postgres'
-ENV DB_PASSWORD 'YuraMarketPassword___1984'
-ENV SECRET_KEY  'KYKOYAKO'
-ENV CELERY_BROKER_URL 'amqp://rmuser:rmpassword@queue:5672'
-ENV CURRENCIES_API_URL 'https://openexchangerates.org/api/latest.json?app_id=abc67069f8c44a2da70e25274a8f7edf'
 
 
 WORKDIR /backend
