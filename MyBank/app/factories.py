@@ -1,10 +1,17 @@
 from typing import Protocol
 from logging import getLogger
 
-from app.repositories import RepositoryProtocol, UserRepository, CurrencyRepository, AccountRepository, \
-    PropertyRepository
-from app.services.services import ServiceProtocol, CounterProtocol, Counter, UserService, UserServiceProtocol, \
-    Service, CurrencyServiceProtocol, CurrencyService
+from django.conf import settings
+
+from app.repositories import (
+    RepositoryProtocol, UserRepository, CurrencyRepository, AccountRepository, PropertyRepository
+)
+from app.services import (
+    ServiceProtocol, CounterProtocol, Counter, UserService, UserServiceProtocol, Service, TicketServiceProtocol,
+    CurrencyService
+)
+from app.services.currency import CurrencyRequester, CurrencyUpdater
+from app.services.requester import RequesterProtocol, UpdaterProtocol
 
 logger = getLogger(__name__)
 
@@ -12,22 +19,41 @@ logger = getLogger(__name__)
 class FactoryProtocol(Protocol):
 
     @staticmethod
-    def get_repository(self) -> RepositoryProtocol: ...
+    def get_repository() -> RepositoryProtocol: ...
+
+    @classmethod
+    def get_service(cls) -> ServiceProtocol: ...
+
+
+class TicketFactoryProtocol(FactoryProtocol, Protocol):
 
     @staticmethod
-    def get_service(self) -> ServiceProtocol: ...
+    def get_requester() -> RequesterProtocol: ...
+
+    @staticmethod
+    def get_updater() -> UpdaterProtocol: ...
+
+    @classmethod
+    def get_service(cls) -> TicketServiceProtocol: ...
 
 
 class CurrencyFactory:
 
     @staticmethod
+    def get_requester() -> RequesterProtocol:
+        return CurrencyRequester(settings.CURRENCIES_API_URL)
+
+    @staticmethod
+    def get_updater() -> UpdaterProtocol:
+        return CurrencyUpdater()
+
+    @staticmethod
     def get_repository() -> RepositoryProtocol:
         return CurrencyRepository()
 
-    @staticmethod
-    def get_service() -> CurrencyServiceProtocol:
-        repository: RepositoryProtocol = CurrencyFactory.get_repository()
-        return CurrencyService(repository)
+    @classmethod
+    def get_service(cls) -> TicketServiceProtocol:
+        return CurrencyService(cls.get_repository(), cls.get_requester(), cls.get_updater())
 
 
 class AccountFactory:
@@ -36,10 +62,9 @@ class AccountFactory:
     def get_repository() -> RepositoryProtocol:
         return AccountRepository()
 
-    @staticmethod
-    def get_service() -> ServiceProtocol:
-        repository: RepositoryProtocol = AccountFactory.get_repository()
-        return Service(repository)
+    @classmethod
+    def get_service(cls) -> ServiceProtocol:
+        return Service(cls.get_repository())
 
 
 class PropertyFactory:
@@ -48,10 +73,9 @@ class PropertyFactory:
     def get_repository() -> RepositoryProtocol:
         return PropertyRepository()
 
-    @staticmethod
-    def get_service() -> ServiceProtocol:
-        repository: RepositoryProtocol = PropertyFactory.get_repository()
-        return Service(repository)
+    @classmethod
+    def get_service(cls) -> ServiceProtocol:
+        return Service(cls.get_repository())
 
 
 class UserFactory:

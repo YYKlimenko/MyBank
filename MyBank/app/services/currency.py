@@ -5,32 +5,37 @@ import requests
 from django.conf import settings
 
 from .crud import CRUDProtocol
-from .services import ServiceProtocol, AbstractService
+from .requester import RequesterProtocol, UpdaterProtocol
+from .services import AbstractService
 
 
-class CurrencyServiceProtocol(ServiceProtocol, Protocol):
+class CurrencyRequester:
+    def __init__(self, url: str):
+        self._url = url
 
-    @staticmethod
-    def request_currencies() -> dict[str, Any]: ...
+    def __call__(self) -> dict[str, Any]:
+        currencies = requests.get(self._url).json()['rates']
+        return currencies
 
-    def update_currencies(self) -> None: ...
+
+class CurrencyUpdater:
+    def __call__(self, data: dict[str, Any], crud: CRUDProtocol) -> None:
+        main_currencies = {'USD': data.pop('RUB'), 'RUB': 1}
+        for currency in data:
+            crud.post(name=currency, value=1 / data[currency] * main_currencies['USD'])
+
+        for currency in main_currencies:
+            crud.post(name=currency, value=main_currencies[currency])
 
 
 class CurrencyService(AbstractService):
-    def __init__(self, crud: CRUDProtocol):
+    def __init__(self, crud: CRUDProtocol, requester: RequesterProtocol, updater: UpdaterProtocol):
         self._crud = crud
+        self._requester = requester
+        self._updater = updater
 
-    @staticmethod
-    def request_currencies() -> dict[str, Any]:
-        currencies = requests.get(settings.CURRENCIES_API_URL).json()['rates']
-
-        return currencies
+    def request_currencies(self) -> dict[str, Any]:
+        return self._requester()
 
     def update_currencies(self) -> None:
-        currencies = self.request_currencies()
-        main_currencies = {'USD': currencies.pop('RUB'), 'RUB': 1}
-        for currency in currencies:
-            self._crud.post(name=currency, value=1 / currencies[currency] * main_currencies['USD'])
-
-        for currency in main_currencies:
-            self._crud.post(name=currency, value=main_currencies[currency])
+        return self._updater(self.request_currencies(), self._crud)

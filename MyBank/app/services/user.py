@@ -22,14 +22,20 @@ class UserServiceProtocol(ServiceProtocol, Protocol):
     def get_sum(self, user_id: int) -> dict[str, Any]: ...
 
 
-class UserService(AbstractService):
-    def __init__(self, crud: CRUDProtocol, counter: CounterProtocol):
-        self._crud = crud
-        self._counter = counter
-
+class Counter:
+    @staticmethod
     def get_sum(self, user_id: int) -> dict[str, Any]:
         user = self.get(id=user_id)
         return {
             'username': user.username,
             'result': self._counter.get_sum(user),
         }
+
+
+class UserService(AbstractService):
+    def __init__(self, crud: CRUDProtocol, counter: CounterProtocol):
+        self._crud = crud
+        self._counter = counter
+
+    def get_sum(self, user_id: int) -> dict[str, Any]:
+        return self._counter.get_sum(user_id)
