@@ -43,21 +43,25 @@ services:
       - .env
     ports:
       - '8000:8000'
-    entrypoint: /bin/bash -c 'cd MyBank && gunicorn MyBank.wsgi:application --bind 0.0.0.0:8000'
+    entrypoint: ['gunicorn', 'MyBank.wsgi:application', '--bind', '0.0.0.0:8000']
     user: backend
 
 
   migrate:
-      image: app
-      env_file:
+    build:
+      context: ..
+      dockerfile: ./docker/DockerfileBackend
+    env_file:
         - .env
-      entrypoint: ['python', 'MyBank/manage.py', 'migrate']
-      depends_on:
+    entrypoint: ['python', 'MyBank/manage.py', 'migrate']
+    depends_on:
         db:
           condition: service_healthy
 
   super_user_creator:
-    image: app
+    build:
+      context: ..
+      dockerfile: ./docker/DockerfileBackend
     env_file:
       - .env
     entrypoint: ['python', 'MyBank/manage.py', 'createsuperuser', '--no-input']
@@ -66,7 +70,9 @@ services:
         condition: service_completed_successfully
 
   collect_static:
-    image: app
+    build:
+      context: ..
+      dockerfile: ./docker/DockerfileBackend
     env_file:
       - .env
     entrypoint: ['python', 'MyBank/manage.py', 'collectstatic']
@@ -77,7 +83,9 @@ services:
       - static:/backend/MyBank/static
 
   update_currencies:
-    image: app
+    build:
+      context: ..
+      dockerfile: ./docker/DockerfileBackend
     env_file:
       - .env
     entrypoint: ['python', 'MyBank/manage.py', 'update_currencies']
@@ -86,24 +94,25 @@ services:
         condition: service_completed_successfully
 
   worker:
-    image: app
+    build:
+      context: ..
+      dockerfile: ./docker/DockerfileBackend
     env_file:
       - .env
-    environment:
-      PYTHONPATH: "${PYTHONPATH}:/backend/MyBank/"
-    entrypoint: ['celery', '-A', 'MyBank', 'workler', '-l', 'INFO']
-    entrypoint: /bin/bash -c 'cd MyBank && celery -A MyBank worker -l INFO'
+    entrypoint: ['celery', '-A', 'MyBank', 'worker', '-l', 'INFO']
     depends_on:
       queue:
         condition: service_healthy
     user: backend
 
   schedule:
-      image: app
-      env_file:
+    build:
+      context: ..
+      dockerfile: ./docker/DockerfileBackend
+    env_file:
         - .env
-      entrypoint: /bin/bash -c 'cd MyBank && celery -A MyBank beat -l INFO'
-      depends_on:
+    entrypoint: ['celery', '-A', 'MyBank', 'beat', '-l', 'INFO']
+    depends_on:
         queue:
           condition: service_healthy
 

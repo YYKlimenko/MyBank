@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import QuerySet
 
 from MyBank.metaclasses import Bean
-from app.models import Currency, Account
+from app.models import Currency, Account, Property
 
 
 class RepositoryProtocol(Protocol):
@@ -42,3 +42,7 @@ class CurrencyRepository(AbstractRepository):
 
 class AccountRepository(AbstractRepository):
     model = Account
+
+
+class PropertyRepository(AbstractRepository):
+    model = Property

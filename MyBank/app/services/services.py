@@ -1,3 +1,4 @@
+import abc
 from typing import Protocol, Any
 
 import requests
@@ -11,6 +12,12 @@ from app.repositories import RepositoryProtocol
 
 
 class CRUDProtocol(Protocol):
+    def get(self, many=False, prefetch_all=True, **filter_fields) -> QuerySet: ...
+
+    def post(self, **fields) -> None: ...
+
+
+class ServiceProtocol(Protocol):
     def get(self, many=False, prefetch_all=True, **filter_fields) -> QuerySet: ...
 
     def post(self, **fields) -> None: ...
@@ -37,6 +44,16 @@ class CounterProtocol(Protocol):
     ) -> dict[str, Any]: ...
 
 
+class AbstractService(abc.ABC):
+    _crud: CRUDProtocol
+
+    def get(self, many=False, prefetch_all=True, **filter_fields) -> QuerySet:
+        return self._crud.get(many, prefetch_all, **filter_fields)
+
+    def post(self, **fields) -> None:
+        return self._crud.post(**fields)
+
+
 class Counter(metaclass=Bean):
 
     @staticmethod
@@ -59,31 +76,61 @@ class Counter(metaclass=Bean):
         return result
 
 
-class CurrencyService(metaclass=Bean):
-    def __init__(self, crud: CRUDProtocol):
-        self.crud = crud
+class CurrencyServiceProtocol(ServiceProtocol, Protocol):
 
     @staticmethod
-    def request_currencies():
+    def request_currencies() -> dict[str, Any]: ...
+
+    def update_currencies(self) -> None: ...
+
+
+class CurrencyService(AbstractService):
+    def __init__(self, crud: CRUDProtocol):
+        self._crud = crud
+
+    @staticmethod
+    def request_currencies() -> dict[str, Any]:
         currencies = requests.get(settings.CURRENCIES_API_URL).json()['rates']
-        currencies['USD'], currencies['RUB'] = currencies['RUB'], 1
+
         return currencies
 
-    def update_currencies(self):
+    def update_currencies(self) -> None:
         currencies = self.request_currencies()
+        main_currencies = {'USD': currencies.pop('RUB'), 'RUB': 1}
         for currency in currencies:
-            self.crud.post(name=currency, value=1 / currencies[currency] * currencies['USD'])
+            self._crud.post(name=currency, value=1 / currencies[currency] * main_currencies['USD'])
+
+        for currency in main_currencies:
+            self._crud.post(name=currency, value=main_currencies[currency])
 
 
-class UserService:
+class UserServiceProtocol(ServiceProtocol, Protocol):
+    def get_sum(self, user_id: int) -> dict[str, Any]: ...
+
+
+class AbstractService(abc.ABC):
+    _crud: CRUDProtocol
+
+    def get(self, many=False, prefetch_all=True, **filter_fields) -> QuerySet:
+        return self._crud.get(many, prefetch_all, **filter_fields)
+
+    def post(self, **fields) -> None:
+        return self._crud.post(**fields)
+
+
+class Service(AbstractService):
+    def __init__(self, crud: CRUDProtocol):
+        self._crud = crud
+
+
+class UserService(AbstractService):
     def __init__(self, crud: CRUDProtocol, counter: CounterProtocol):
-        self.crud = crud
+        self._crud = crud
         self._counter = counter
 
-    def get_sum(self, user_id: int):
-        user = self.crud.get(id=user_id)
+    def get_sum(self, user_id: int) -> dict[str, Any]:
+        user = self.get(id=user_id)
         return {
             'username': user.username,
             'result': self._counter.get_sum(user),
         }
-

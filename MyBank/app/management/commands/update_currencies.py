@@ -1,9 +1,8 @@
 from django.core.management import BaseCommand
 
-from app.repositories import CurrencyRepository
-from app.services.services import CurrencyService
+from app.factories import CurrencyFactory
 
 
 class Command(BaseCommand):
     def handle(self, **options):
-        CurrencyService(CurrencyRepository()).update_currencies()
+        CurrencyFactory.get_service().update_currencies()
