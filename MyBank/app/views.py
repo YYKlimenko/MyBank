@@ -9,7 +9,8 @@ from .serializers import (
     CurrencySerializer, AccountSerializer, CreatingAccountSerializer, UserSerializer,
     QuerySerializer, PropertySerializer
 )
-from .services.services import UserServiceProtocol, ServiceProtocol
+from .services.services import ServiceProtocol
+from .services.user import UserServiceProtocol
 
 
 class BaseView(APIView):
