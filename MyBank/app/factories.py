@@ -13,10 +13,10 @@ from app.services import (
 from app.services.currency import CurrencyRequester, CurrencyUpdater
 from app.services.requester import RequesterProtocol, UpdaterProtocol
 
-logger = getLogger(__name__)
-
 
 class FactoryProtocol(Protocol):
+    repository: RepositoryProtocol
+    service: ServiceProtocol
 
     @staticmethod
     def get_repository() -> RepositoryProtocol: ...
@@ -26,6 +26,8 @@ class FactoryProtocol(Protocol):
 
 
 class TicketFactoryProtocol(FactoryProtocol, Protocol):
+    requester: RequesterProtocol
+    updater: UpdaterProtocol
 
     @staticmethod
     def get_requester() -> RequesterProtocol: ...
