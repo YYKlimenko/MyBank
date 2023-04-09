@@ -1,19 +1,22 @@
 """The protocol, the abstract class and implementations to create family of objects."""
 from typing import Protocol, Type
 
-from django.conf import settings
-
 from . import FactoryProtocol
-from .factories import AbstractFactory
-from ..services import TicketServiceProtocol, RequesterProtocol, UpdaterProtocol, ServiceProtocol, CRUD
+from . import Factory
+from ..repositories import CurrencyRepository
+from ..services import (
+    TicketServiceProtocol, RequesterProtocol, UpdaterProtocol, CRUD, TicketService,
+    CurrencyRequester, CurrencyUpdater
+)
+from ..services.requester import Requester, Updater
 
 
 class TicketFactoryProtocol(FactoryProtocol, Protocol):
-    _service_class: Type[TicketServiceProtocol]
+    _service_class: Type[TicketService]
     _service: TicketServiceProtocol
-    _repository_class = Protocol[RequesterProtocol]
+    _requester_class = Type[Requester]
     _requester: RequesterProtocol
-    _updater_class = Protocol[UpdaterProtocol]
+    _updater_class = Type[Updater]
     _updater: UpdaterProtocol
 
     @classmethod
@@ -26,12 +29,12 @@ class TicketFactoryProtocol(FactoryProtocol, Protocol):
     def get_service(cls) -> TicketServiceProtocol: ...
 
 
-class TicketFactory(AbstractFactory):
-    _service_class: Protocol[TicketServiceProtocol]
+class TicketFactory(Factory):
+    _service_class: Type[TicketService] = TicketService
     _service: TicketServiceProtocol | None = None
-    _requester_class = Protocol[RequesterProtocol]
+    _requester_class: Type[Requester]
     _requester: RequesterProtocol | None = None
-    _updater_class = Protocol[UpdaterProtocol]
+    _updater_class: Type[Updater]
     _updater: UpdaterProtocol | None = None
 
     @classmethod
@@ -52,3 +55,10 @@ class TicketFactory(AbstractFactory):
             crud = CRUD(cls.get_repository())
             cls._service = cls._service_class(crud, cls.get_requester(), cls.get_updater())
         return cls._service
+
+
+class CurrencyFactory(TicketFactory):
+    _service: TicketServiceProtocol | None = None
+    _requester_class: Type[RequesterProtocol] = CurrencyRequester
+    _updater_class: Type[UpdaterProtocol] = CurrencyUpdater
+    _repository_class: Type[CurrencyRepository] = CurrencyRepository

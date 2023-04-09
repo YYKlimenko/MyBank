@@ -15,3 +15,15 @@ class RequesterProtocol(Protocol):
 class UpdaterProtocol(Protocol):
     """The protocol to implement in Updater classes."""
     def __call__(self, requester: RequesterProtocol, crud: CRUDProtocol) -> None: ...
+
+
+class Requester(abc.ABC):
+    """The abstract class to use in implementations of RequesterProtocol."""
+    _URL: str
+
+    def __call__(self) -> dict[str, Any]: ...
+
+
+class Updater(abc.ABC):
+    """The abstract class to use in implementations of UpdaterProtocol."""
+    def __call__(self, requester: RequesterProtocol, crud: CRUDProtocol) -> None: ...

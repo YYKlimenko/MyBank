@@ -5,12 +5,12 @@ import requests
 from django.conf import settings
 
 from .crud import CRUDProtocol
-from .requester import RequesterProtocol, AbstractRequester
+from .requester import RequesterProtocol
 
 
 class CurrencyRequester:
     """The implementation of AbstractRequester for Currency model."""
-    _URL = settings.API_CURRENCIES_URL
+    _URL = settings.CURRENCIES_API_URL
 
     def __call__(self) -> dict[str, Any]:
         currencies = requests.get(self._URL).json()['rates']

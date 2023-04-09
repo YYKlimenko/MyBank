@@ -3,28 +3,28 @@ import abc
 from typing import Protocol, Type
 
 from app.repositories import RepositoryProtocol, AccountRepository, PropertyRepository
-from app.services import CRUDProtocol, Service, CRUD, ServiceProtocol
+from app.services import CRUD, ServiceProtocol, Service
 
 
 class FactoryProtocol(Protocol):
     """The protocol to implementation in factory classes."""
     _repository_class: Type[RepositoryProtocol]
-    _service_class: Type[ServiceProtocol]
+    _service_class: Type[Service]
     _repository: RepositoryProtocol | None
     _service: ServiceProtocol | None
 
-    @staticmethod
-    def get_repository() -> RepositoryProtocol: ...
+    @classmethod
+    def get_repository(cls) -> RepositoryProtocol: ...
 
     @classmethod
     def get_service(cls) -> ServiceProtocol: ...
 
 
-class AbstractFactory(abc.ABC):
+class Factory:
     """The Abstract Factory class to use in implementations."""
-    _repository_class: Protocol[RepositoryProtocol]
-    _service_class: Protocol[ServiceProtocol]
-    _repository: RepositoryProtocol | None
+    _repository_class: Type[RepositoryProtocol]
+    _service_class: Type[Service] = Service
+    _repository: RepositoryProtocol | None = None
     _service: ServiceProtocol | None = None
 
     @classmethod
@@ -41,11 +41,11 @@ class AbstractFactory(abc.ABC):
         return cls._service
 
 
-class AccountFactory(AbstractFactory):
+class AccountFactory(Factory):
     """The implementation of AbstractFactory and FactoryProtocol for Account model."""
     _repository_class: Type[RepositoryProtocol] = AccountRepository
 
 
-class PropertyFactory(AbstractFactory):
+class PropertyFactory(Factory):
     """The implementation of AbstractFactory and FactoryProtocol for Property model."""
     _repository_class: Type[RepositoryProtocol] = PropertyRepository

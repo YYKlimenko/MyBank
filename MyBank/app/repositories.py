@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import QuerySet
 
-from MyBank.metaclasses import Bean
 from app.models import Currency, Account, Property, Stock
 
 
@@ -18,8 +17,8 @@ class RepositoryProtocol(Protocol):
         ...
 
 
-class AbstractRepository(metaclass=Bean):
-    model: models.Model | Any = ...
+class AbstractRepository:
+    model: models.Model | Any
 
     def get(self, many: bool = False, prefetch_all=False, **filter_fields) -> QuerySet:
         instances = self.model.objects.filter(**filter_fields).select_related()
