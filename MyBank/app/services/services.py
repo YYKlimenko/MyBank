@@ -1,31 +1,39 @@
 """Protocols and implementations for common Service."""
 
-import abc
 from typing import Protocol, Any
-
-from django.db.models import QuerySet
 
 from .crud import CRUDProtocol
 from .requester import RequesterProtocol, UpdaterProtocol
-from ..repositories import RepositoryProtocol
 
 
 class ServiceProtocol(Protocol):
     crud: CRUDProtocol
 
-    def __init__(self, crud: CRUDProtocol, **kwargs): ...
 
-
-class TicketServiceProtocol(CRUDProtocol, Protocol):
+class TicketServiceProtocol(ServiceProtocol, Protocol):
     _requester: RequesterProtocol
     _updater: UpdaterProtocol
 
-    def request_currencies(self) -> dict[str, Any]: ...
+    def request(self) -> dict[str, Any]: ...
 
-    def update_currencies(self) -> None: ...
+    def update(self) -> None: ...
 
 
 class Service:
 
     def __init__(self, crud: CRUDProtocol):
         self.crud = crud
+
+
+class TicketService(Service):
+
+    def __init__(self, crud: CRUDProtocol, requester: RequesterProtocol, updater: UpdaterProtocol):
+        super().__init__(crud)
+        self._requester = requester
+        self._updater = updater
+
+    def request(self) -> dict[str, Any]:
+        return self._requester()
+
+    def update(self) -> None:
+        return self._updater(self._requester, self.crud)

@@ -17,13 +17,13 @@ class FactoryProtocol(Protocol):
     def get_repository() -> RepositoryProtocol: ...
 
     @classmethod
-    def get_service(cls) -> CRUDProtocol: ...
+    def get_service(cls) -> ServiceProtocol: ...
 
 
 class AbstractFactory(abc.ABC):
     """The Abstract Factory class to use in implementations."""
-    _repository_class: Type[RepositoryProtocol]
-    _service_class: Type[ServiceProtocol]
+    _repository_class: Protocol[RepositoryProtocol]
+    _service_class: Protocol[ServiceProtocol]
     _repository: RepositoryProtocol | None
     _service: ServiceProtocol | None = None
 
@@ -41,15 +41,11 @@ class AbstractFactory(abc.ABC):
         return cls._service
 
 
-class BaseServiceFactory(AbstractFactory):
-    _service_class: Type[ServiceProtocol] = Service
-
-
-class AccountFactory(BaseServiceFactory):
+class AccountFactory(AbstractFactory):
     """The implementation of AbstractFactory and FactoryProtocol for Account model."""
     _repository_class: Type[RepositoryProtocol] = AccountRepository
 
 
-class PropertyFactory(BaseServiceFactory):
+class PropertyFactory(AbstractFactory):
     """The implementation of AbstractFactory and FactoryProtocol for Property model."""
     _repository_class: Type[RepositoryProtocol] = PropertyRepository
