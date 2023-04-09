@@ -10,17 +10,17 @@ from app.models import Currency, Account, Property, Stock
 class RepositoryProtocol(Protocol):
     model: models.Model | Any = ...
 
-    def get(self, many: bool = False, prefetch_all=False, **filter_fields) -> QuerySet:
-        ...
+    def get(self, many: bool = False, prefetch_all=False, **filter_fields) -> QuerySet: ...
 
-    def post(self, **fields) -> None:
-        ...
+    def post(self, **fields) -> None: ...
+
+    def delete(self, instance_pk: int | str, pk_field: str = 'id') -> None: ...
 
 
 class AbstractRepository:
     model: models.Model | Any
 
-    def get(self, many: bool = False, prefetch_all=False, **filter_fields) -> QuerySet:
+    def get(self, many: bool = True, prefetch_all=False, **filter_fields) -> QuerySet:
         instances = self.model.objects.filter(**filter_fields).select_related()
         if prefetch_all:
             instances = instances.prefetch_related()
@@ -29,6 +29,9 @@ class AbstractRepository:
     def post(self, **fields) -> None:
         instance = self.model(**fields)
         instance.save()
+
+    def delete(self, instance_pk: int | str, pk_field: str = 'id') -> None:
+        self.get(**{pk_field: instance_pk}).delete()
 
 
 class UserRepository(AbstractRepository):

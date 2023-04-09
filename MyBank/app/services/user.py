@@ -21,15 +21,14 @@ class CounterProtocol(Protocol):
     """The protocol to implement in Counter classes."""
 
     @staticmethod
-    def get_sum(
-            user: UserProtocol,
-            count_accounts: bool = True,
-            count_properties: bool = True
-    ) -> dict[str, Any]: ...
+    def get_sum(user: UserProtocol) -> dict[str, Any]: ...
 
 
 class UserServiceProtocol(ServiceProtocol, Protocol):
     _counter: CounterProtocol
+
+    @staticmethod
+    def get_sum(user_id: int) -> dict[str, Any]: ...
 
 
 class Counter:

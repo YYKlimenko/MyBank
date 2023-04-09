@@ -75,7 +75,7 @@ services:
       dockerfile: ./docker/DockerfileBackend
     env_file:
       - .env
-    entrypoint: ['python', 'MyBank/manage.py', 'collectstatic']
+    entrypoint: ['python', 'MyBank/manage.py', 'collectstatic', '--no-input']
     depends_on:
       super_user_creator:
           condition: service_completed_successfully

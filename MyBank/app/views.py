@@ -1,13 +1,14 @@
 from django.http import JsonResponse, HttpResponse
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.openapi import Parameter, TYPE_STRING, TYPE_INTEGER, IN_QUERY
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .factories import UserFactory, CurrencyFactory, AccountFactory, PropertyFactory
 from .permissions import IsAdminOrOwner, IsAdminOrUser
 from .serializers import (
-    CurrencySerializer, AccountSerializer, CreatingAccountSerializer, UserSerializer,
-    QuerySerializer, PropertySerializer
+    CurrencySerializer, AccountSerializer, CreatingAccountSerializer, UserSerializer, PropertySerializer,
+    CreatingPropertySerializer
 )
 from .services.services import ServiceProtocol
 from .services.user import UserServiceProtocol
@@ -19,7 +20,7 @@ class BaseView(APIView):
 
     def get(self, request, *args, **kwargs):
         filter_fields = {key: request.query_params[key] for key in request.query_params}
-        instances = self.service.get(**filter_fields, many=True)
+        instances = self.service.crud.get(**filter_fields, many=True)
         return Response(status=200, data=self.serializer(instances, many=True).data)
 
 
@@ -33,14 +34,18 @@ class AccountView(BaseView):
     service: ServiceProtocol = AccountFactory.get_service()
     permission_classes = [IsAdminOrOwner]
 
-    @swagger_auto_schema(query_serializer=QuerySerializer)
+    @swagger_auto_schema(manual_parameters=[Parameter('user_id', IN_QUERY, type=TYPE_STRING)])
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=CreatingAccountSerializer)
     def post(self, request, *args, **kwargs):
-        self.service.post(**request.data)
+        self.service.crud.post(**request.data)
         return HttpResponse('Done')
+
+    @swagger_auto_schema(manual_parameters=[Parameter('id', IN_QUERY, type=TYPE_INTEGER)])
+    def delete(self, request) -> None:
+        return self.service.crud.delete(request.data['id'])
 
 
 class PropertyView(BaseView):
@@ -48,13 +53,13 @@ class PropertyView(BaseView):
     service: ServiceProtocol = PropertyFactory.get_service()
     permission_classes = [IsAdminOrOwner]
 
-    @swagger_auto_schema(query_serializer=QuerySerializer)
+    @swagger_auto_schema(manual_parameters=[Parameter('id', IN_QUERY, type=TYPE_INTEGER)])
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    @swagger_auto_schema(request_body=CreatingAccountSerializer)
+    @swagger_auto_schema(request_body=CreatingPropertySerializer)
     def post(self, request, *args, **kwargs):
-        self.service.post(**request.data)
+        self.service.crud.post(**request.data)
         return HttpResponse('Done')
 
 

@@ -12,6 +12,8 @@ class CRUDProtocol(Protocol):
 
     def post(self, **fields) -> None: ...
 
+    def delete(self, instance_id: int) -> None: ...
+
 
 class CRUD:
     """Implementation of the CRUD protocol."""
@@ -23,3 +25,6 @@ class CRUD:
 
     def post(self, **fields) -> None:
         return self._repository.post(**fields)
+
+    def delete(self, instance_pk: int| str) -> None:
+        return self._repository.delete(instance_pk)

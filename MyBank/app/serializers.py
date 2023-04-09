@@ -1,5 +1,3 @@
-import abc
-
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -29,12 +27,12 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class CreatingAccountSerializer(serializers.ModelSerializer):
-    currency_name = serializers.CharField(source='currency')
+    currency_id = serializers.CharField(source='currency')
     user_id = serializers.IntegerField(source='user')
 
     class Meta:
         model = Account
-        fields = ('id', 'name', 'count', 'user_id', 'currency_name')
+        fields = ('id', 'name', 'count', 'user_id', 'currency_id')
 
 
 class PropertySerializer(serializers.ModelSerializer):
@@ -50,7 +48,3 @@ class CreatingPropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ('name', 'count', 'user_id', 'value', 'description')
-
-
-class QuerySerializer(serializers.Serializer):
-    user_id = serializers.IntegerField()
