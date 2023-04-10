@@ -41,9 +41,9 @@ class Market(models.Model):
 
 class Stock(models.Model):
     name = models.CharField(max_length=25, unique=True, primary_key=True)
-    market = models.ForeignKey(to=Market, on_delete=models.CASCADE, related_name='stocks')
+    # market = models.ForeignKey(to=Market, on_delete=models.CASCADE, related_name='stocks')
     description = models.CharField(max_length=250, null=True)
-    value = models.DecimalField(max_digits=12, decimal_places=5)
+    value = models.DecimalField(max_digits=12, decimal_places=5, null=True)
 
     def __str__(self):
         return self.name

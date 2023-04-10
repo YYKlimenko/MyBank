@@ -9,7 +9,7 @@ class RequesterProtocol(Protocol):
     """The protocol to implement in Requester classes."""
     _URL: str
 
-    def __call__(self) -> dict[str, Any]: ...
+    def __call__(self) -> list[Any] | dict[str, Any]: ...
 
 
 class UpdaterProtocol(Protocol):
@@ -21,7 +21,7 @@ class Requester(abc.ABC):
     """The abstract class to use in implementations of RequesterProtocol."""
     _URL: str
 
-    def __call__(self) -> dict[str, Any]: ...
+    def __call__(self) -> list[Any] | dict[str, Any]: ...
 
 
 class Updater(abc.ABC):

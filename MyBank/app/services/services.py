@@ -1,6 +1,6 @@
 """Protocols and implementations for common Service."""
 
-from typing import Protocol, Any
+from typing import Protocol, Any, Collection
 
 from .crud import CRUDProtocol
 from .requester import RequesterProtocol, UpdaterProtocol
@@ -14,7 +14,7 @@ class TicketServiceProtocol(ServiceProtocol, Protocol):
     _requester: RequesterProtocol
     _updater: UpdaterProtocol
 
-    def request(self) -> dict[str, Any]: ...
+    def request(self) -> list[Any] | dict[str, Any]: ...
 
     def update(self) -> None: ...
 
@@ -32,7 +32,7 @@ class TicketService(Service):
         self._requester = requester
         self._updater = updater
 
-    def request(self) -> dict[str, Any]:
+    def request(self) -> list[Any] | dict[str, Any]:
         return self._requester()
 
     def update(self) -> None:

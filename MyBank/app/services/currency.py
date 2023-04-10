@@ -12,7 +12,7 @@ class CurrencyRequester:
     """The implementation of AbstractRequester for Currency model."""
     _URL = settings.CURRENCIES_API_URL
 
-    def __call__(self) -> dict[str, Any]:
+    def __call__(self) -> list[Any] | dict[str, Any]:
         currencies = requests.get(self._URL).json()['rates']
         return currencies
 

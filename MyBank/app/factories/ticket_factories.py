@@ -3,12 +3,13 @@ from typing import Protocol, Type
 
 from . import FactoryProtocol
 from . import Factory
-from ..repositories import CurrencyRepository
+from ..repositories import CurrencyRepository, StockRepository
 from ..services import (
     TicketServiceProtocol, RequesterProtocol, UpdaterProtocol, CRUD, TicketService,
     CurrencyRequester, CurrencyUpdater
 )
 from ..services.requester import Requester, Updater
+from ..services.stock import MoexStockRequester, MoexStockUpdater
 
 
 class TicketFactoryProtocol(FactoryProtocol, Protocol):
@@ -62,3 +63,10 @@ class CurrencyFactory(TicketFactory):
     _requester_class: Type[RequesterProtocol] = CurrencyRequester
     _updater_class: Type[UpdaterProtocol] = CurrencyUpdater
     _repository_class: Type[CurrencyRepository] = CurrencyRepository
+
+
+class StockFactory(TicketFactory):
+    _service: TicketServiceProtocol | None = None
+    _requester_class: Type[MoexStockRequester] = MoexStockRequester
+    _updater_class: Type[MoexStockUpdater] = MoexStockUpdater
+    _repository_class: Type[StockRepository] = StockRepository
