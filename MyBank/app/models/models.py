@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from .protocols import UserProtocol
+
 
 class Currency(models.Model):
     name = models.CharField(max_length=4, unique=True, primary_key=True)
@@ -13,7 +15,7 @@ class Currency(models.Model):
 
 class Account(models.Model):
     name = models.CharField(default='Account', max_length=25)
-    user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, related_name='accounts')
+    user: UserProtocol = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, related_name='accounts')
     currency = models.ForeignKey(to=Currency, on_delete=models.CASCADE)
     count = models.DecimalField(max_digits=12, decimal_places=5)
 
@@ -23,7 +25,7 @@ class Account(models.Model):
 
 class Property(models.Model):
     user = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, related_name='properties')
-    name = models.CharField(max_length=25, unique=True, primary_key=True)
+    name = models.CharField(max_length=25)
     description = models.CharField(max_length=250, null=True)
     value = models.DecimalField(max_digits=12, decimal_places=5)
 

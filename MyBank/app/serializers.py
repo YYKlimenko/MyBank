@@ -19,11 +19,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    currency = CurrencySerializer()
 
     class Meta:
         model = Account
-        fields = ('id', 'name', 'count', 'user_id', 'currency')
+        fields = ('id', 'name', 'count', 'user_id', 'currency_id')
 
 
 class CreatingAccountSerializer(serializers.ModelSerializer):
@@ -39,12 +38,12 @@ class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Property
-        fields = ('id', 'name', 'count', 'user_id', 'value', 'description')
+        fields = ('id', 'name', 'user_id', 'value', 'description')
 
 
 class CreatingPropertySerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source='user')
 
     class Meta:
-        model = Account
-        fields = ('name', 'count', 'user_id', 'value', 'description')
+        model = Property
+        fields = ('name', 'user_id', 'value', 'description')

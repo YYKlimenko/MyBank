@@ -14,7 +14,7 @@ class RepositoryProtocol(Protocol):
 
     def post(self, **fields) -> None: ...
 
-    def delete(self, instance_pk: int | str, pk_field: str = 'id') -> None: ...
+    def delete(self, pk: int | str) -> None: ...
 
 
 class AbstractRepository:
@@ -30,8 +30,8 @@ class AbstractRepository:
         instance = self.model(**fields)
         instance.save()
 
-    def delete(self, instance_pk: int | str, pk_field: str = 'id') -> None:
-        self.get(**{pk_field: instance_pk}).delete()
+    def delete(self, pk: int | str) -> None:
+        self.get(pk=pk).delete()
 
 
 class UserRepository(AbstractRepository):

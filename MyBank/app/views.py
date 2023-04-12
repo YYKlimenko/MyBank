@@ -18,7 +18,7 @@ from .services.user import UserServiceProtocol
 class BaseView(APIView):
     """BaseView to use in concrete views."""
     _get_serializer = ...
-    _post_serializer = _get_serializer
+    _post_serializer = ...
     _service: ServiceProtocol = ...
 
     def get(self, request, *args, **kwargs):
@@ -34,26 +34,36 @@ class BaseView(APIView):
             return HttpResponseBadRequest('Data is not valid')
 
     def delete(self, request, *args, **kwargs) -> HttpResponse:
-        pk = request.data.get('pk')
+        pk = request.query_params.get('pk')
         if pk is None:
             return HttpResponseBadRequest('PK parameter is required')
-        self._service.crud.delete(request.data['pk'])
+        self._service.crud.delete(pk=pk)
         return HttpResponse('Done', status=201)
 
 
 class CurrencyView(BaseView):
     """The view class for the Currency model."""
     _get_serializer = CurrencySerializer
+    _post_serializer = CurrencySerializer
     _service: ServiceProtocol = CurrencyFactory.get_service()
+
+    @swagger_auto_schema(request_body=CurrencySerializer)
+    def post(self, request, *args, **kwargs) -> HttpResponse:
+        return super().post(request, *args, **kwargs)
+
+    @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_STRING)])
+    def delete(self, request, *args, **kwargs) -> HttpResponse:
+        return super().delete(request, *args, **kwargs)
 
 
 class AccountView(BaseView):
     """The view class for the Account model."""
-    serializer = AccountSerializer
-    service: ServiceProtocol = AccountFactory.get_service()
+    _get_serializer = AccountSerializer
+    _post_serializer = CreatingAccountSerializer
+    _service: ServiceProtocol = AccountFactory.get_service()
     permission_classes = [IsAdminOrOwner]
 
-    @swagger_auto_schema(manual_parameters=[Parameter('user_id', IN_QUERY, type=TYPE_STRING)])
+    @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_STRING)])
     def get(self, request, *args, **kwargs) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
@@ -61,15 +71,16 @@ class AccountView(BaseView):
     def post(self, request, *args, **kwargs) -> HttpResponse:
         return super().post(request, *args, **kwargs)
 
-    @swagger_auto_schema(manual_parameters=[Parameter('id', IN_QUERY, type=TYPE_INTEGER)])
+    @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_INTEGER)])
     def delete(self, request, *args, **kwargs) -> HttpResponse:
         return super().delete(request, *args, **kwargs)
 
 
 class PropertyView(BaseView):
     """The view class for the Property model."""
-    serializer = PropertySerializer
-    service: ServiceProtocol = PropertyFactory.get_service()
+    _get_serializer = PropertySerializer
+    _post_serializer = CreatingPropertySerializer
+    _service: ServiceProtocol = PropertyFactory.get_service()
     permission_classes = [IsAdminOrOwner]
 
     @swagger_auto_schema(manual_parameters=[Parameter('id', IN_QUERY, type=TYPE_INTEGER)])
@@ -83,8 +94,8 @@ class PropertyView(BaseView):
 
 class UserView(BaseView):
     """The view class for the User model."""
-    serializer = UserSerializer
-    service: UserServiceProtocol = UserFactory.get_service()
+    _get_serializer = UserSerializer
+    _service: UserServiceProtocol = UserFactory.get_service()
     permission_classes = [IsAdminOrUser]
 
 

@@ -2,19 +2,9 @@
 from typing import Protocol, Any
 
 from .crud import CRUDProtocol
+
 from .services import Service, ServiceProtocol
-
-
-class UserProtocol(Protocol):
-    class Account(Protocol):
-        value: int
-        count: int
-
-    class Property(Protocol):
-        value: int
-
-    accounts: list[Account]
-    properties: list[Property]
+from ..models import UserProtocol
 
 
 class CounterProtocol(Protocol):
@@ -35,9 +25,11 @@ class Counter:
     @staticmethod
     def get_sum(user: UserProtocol) -> dict[str, Any]:
         data = {'accounts': 0, 'properties': 0}
-        for i in data:
-            for j in getattr(user, i):
-                data[i] += j.value * getattr(j, 'count', 1)
+        for account in user.accounts.all():
+            data['accounts'] += account.count * account.currency.value
+        for property_ in user.properties.all():
+            data['properties'] += property_.value
+        data['total'] = sum((data['accounts'], data['properties']))
         return data
 
 

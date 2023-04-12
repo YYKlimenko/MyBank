@@ -12,7 +12,7 @@ class CRUDProtocol(Protocol):
 
     def post(self, **fields) -> None: ...
 
-    def delete(self, instance_id: int) -> None: ...
+    def delete(self, pk: str | int) -> None: ...
 
 
 class CRUD:
@@ -26,5 +26,5 @@ class CRUD:
     def post(self, **fields) -> None:
         return self._repository.post(**fields)
 
-    def delete(self, instance_pk: int| str) -> None:
-        return self._repository.delete(instance_pk)
+    def delete(self, pk: int | str) -> None:
+        return self._repository.delete(pk=pk)

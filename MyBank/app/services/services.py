@@ -1,6 +1,6 @@
 """Protocols and implementations for common Service."""
 
-from typing import Protocol, Any, Collection
+from typing import Protocol, Any
 
 from .crud import CRUDProtocol
 from .requester import RequesterProtocol, UpdaterProtocol
