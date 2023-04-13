@@ -3,7 +3,7 @@ from typing import Protocol, Any
 
 from .crud import CRUDProtocol
 
-from .services import Service, ServiceProtocol
+from .base import Service, ServiceProtocol
 from ..models import UserProtocol
 
 

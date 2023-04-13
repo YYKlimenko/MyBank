@@ -1,12 +1,12 @@
 from typing import Protocol
 
 
-class CurrencyProtocol(Protocol):
+class AssetProtocol(Protocol):
     value: float
 
 
 class AccountProtocol(Protocol):
-    currency: CurrencyProtocol
+    currency: AssetProtocol
     count: int
 
 

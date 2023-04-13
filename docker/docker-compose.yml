@@ -82,27 +82,16 @@ services:
     volumes:
       - static:/backend/MyBank/static
 
-  update_currencies:
+  update_database:
     build:
       context: ..
       dockerfile: ./docker/DockerfileBackend
     env_file:
       - .env
-    entrypoint: ['python', 'MyBank/manage.py', 'update_currencies']
+    entrypoint: ['python', 'MyBank/manage.py', 'update_database']
     depends_on:
       migrate:
         condition: service_completed_successfully
-
-#  update_moex_stocks:
-#    build:
-#      context: ..
-#      dockerfile: ./docker/DockerfileBackend
-#    env_file:
-#      - .env
-#    entrypoint: [ 'python', 'MyBank/manage.py', 'update_moex_stocks' ]
-#    depends_on:
-#      migrate:
-#        condition: service_completed_successfully
 
   worker:
     build:

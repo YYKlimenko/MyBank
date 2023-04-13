@@ -14,6 +14,8 @@ class CRUDProtocol(Protocol):
 
     def delete(self, pk: str | int) -> None: ...
 
+    def update(self, pk: int | str, data: dict[str, Any]): ...
+
 
 class CRUD:
     """Implementation of the CRUD protocol."""
@@ -27,4 +29,7 @@ class CRUD:
         return self._repository.post(**fields)
 
     def delete(self, pk: int | str) -> None:
-        return self._repository.delete(pk=pk)
+        return self._repository.delete(pk)
+
+    def update(self, pk: int | str, data: dict[str, Any]):
+        return self._repository.update(pk, data)

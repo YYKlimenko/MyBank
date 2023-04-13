@@ -10,7 +10,7 @@ class ServiceProtocol(Protocol):
     crud: CRUDProtocol
 
 
-class TicketServiceProtocol(ServiceProtocol, Protocol):
+class AssetServiceProtocol(ServiceProtocol, Protocol):
     _requester: RequesterProtocol
     _updater: UpdaterProtocol
 
@@ -25,7 +25,7 @@ class Service:
         self.crud = crud
 
 
-class TicketService(Service):
+class AssetService(Service):
 
     def __init__(self, crud: CRUDProtocol, requester: RequesterProtocol, updater: UpdaterProtocol):
         super().__init__(crud)

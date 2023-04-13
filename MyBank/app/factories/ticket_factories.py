@@ -3,18 +3,18 @@ from typing import Protocol, Type
 
 from . import FactoryProtocol
 from . import Factory
-from ..repositories import CurrencyRepository, StockRepository
+from ..repositories import AssetRepository
 from ..services import (
-    TicketServiceProtocol, RequesterProtocol, UpdaterProtocol, CRUD, TicketService,
+    AssetServiceProtocol, RequesterProtocol, UpdaterProtocol, CRUD, AssetService,
     CurrencyRequester, CurrencyUpdater
 )
 from ..services.requester import Requester, Updater
-from ..services.stock import MoexStockRequester, MoexStockUpdater
+from ..services.assets import MoexStockRequester, MoexStockUpdater
 
 
-class TicketFactoryProtocol(FactoryProtocol, Protocol):
-    _service_class: Type[TicketService]
-    _service: TicketServiceProtocol
+class AssetFactoryProtocol(FactoryProtocol, Protocol):
+    _service_class: Type[AssetService]
+    _service: AssetServiceProtocol
     _requester_class = Type[Requester]
     _requester: RequesterProtocol
     _updater_class = Type[Updater]
@@ -27,12 +27,14 @@ class TicketFactoryProtocol(FactoryProtocol, Protocol):
     def get_updater(cls) -> UpdaterProtocol: ...
 
     @classmethod
-    def get_service(cls) -> TicketServiceProtocol: ...
+    def get_service(cls) -> AssetServiceProtocol: ...
 
 
 class TicketFactory(Factory):
-    _service_class: Type[TicketService] = TicketService
-    _service: TicketServiceProtocol | None = None
+    _service_class: Type[AssetService] = AssetService
+    _service: AssetServiceProtocol | None = None
+    _repository_class: Type[AssetRepository] = AssetRepository
+    _repository: AssetRepository | None = None
     _requester_class: Type[Requester]
     _requester: RequesterProtocol | None = None
     _updater_class: Type[Updater]
@@ -51,7 +53,7 @@ class TicketFactory(Factory):
         return cls._updater
 
     @classmethod
-    def get_service(cls) -> TicketServiceProtocol:
+    def get_service(cls) -> AssetServiceProtocol:
         if cls._service is None:
             crud = CRUD(cls.get_repository())
             cls._service = cls._service_class(crud, cls.get_requester(), cls.get_updater())
@@ -59,14 +61,10 @@ class TicketFactory(Factory):
 
 
 class CurrencyFactory(TicketFactory):
-    _service: TicketServiceProtocol | None = None
     _requester_class: Type[RequesterProtocol] = CurrencyRequester
     _updater_class: Type[UpdaterProtocol] = CurrencyUpdater
-    _repository_class: Type[CurrencyRepository] = CurrencyRepository
 
 
 class StockFactory(TicketFactory):
-    _service: TicketServiceProtocol | None = None
     _requester_class: Type[MoexStockRequester] = MoexStockRequester
     _updater_class: Type[MoexStockUpdater] = MoexStockUpdater
-    _repository_class: Type[StockRepository] = StockRepository

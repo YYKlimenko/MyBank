@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from app.models import Account, Currency, Property
+from app.models import Asset, Account, Property
 
 
-class CurrencySerializer(serializers.ModelSerializer):
+class AssetSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Currency
+        model = Asset
         fields = ('name', 'value')
 
 

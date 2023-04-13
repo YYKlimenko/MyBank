@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import QuerySet
 
-from app.models import Currency, Account, Property, Stock
+from app.models import Asset, Account, Property, AssetCategory
 
 
 class RepositoryProtocol(Protocol):
@@ -15,6 +15,8 @@ class RepositoryProtocol(Protocol):
     def post(self, **fields) -> None: ...
 
     def delete(self, pk: int | str) -> None: ...
+
+    def update(self, pk: int | str, data: dict[str, Any]): ...
 
 
 class AbstractRepository:
@@ -33,13 +35,20 @@ class AbstractRepository:
     def delete(self, pk: int | str) -> None:
         self.get(pk=pk).delete()
 
+    def update(self, pk: int | str, data: dict[str, Any]):
+        self.get(pk=pk).update(**data)
+
 
 class UserRepository(AbstractRepository):
     model = get_user_model()
 
 
-class CurrencyRepository(AbstractRepository):
-    model = Currency
+class AssetRepository(AbstractRepository):
+    model = Asset
+
+
+class AssetCategoryRepository(AbstractRepository):
+    model = AssetCategory
 
 
 class AccountRepository(AbstractRepository):
@@ -48,7 +57,3 @@ class AccountRepository(AbstractRepository):
 
 class PropertyRepository(AbstractRepository):
     model = Property
-
-
-class StockRepository(AbstractRepository):
-    model = Stock

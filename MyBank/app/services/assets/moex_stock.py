@@ -1,15 +1,15 @@
-"""Protocols and implementations of Stock service."""
+"""Protocols and implementations of Moex stocks service."""
 from typing import Any
 
 import requests
 from django.conf import settings
 
-from . import RequesterProtocol
-from .crud import CRUDProtocol
+from ..requester import RequesterProtocol
+from ..crud import CRUDProtocol
 
 
 class MoexStockRequester:
-    """The implementation of AbstractRequester for Stock model."""
+    """The implementation of AbstractRequester to ge moex stocks."""
     _URL = settings.STOCK_API_URL
 
     def __call__(self) -> list[Any] | dict[str, Any]:
@@ -18,7 +18,7 @@ class MoexStockRequester:
 
 
 class MoexStockUpdater:
-    """The implementation of AbstractUpdater for Stock model."""
+    """The implementation of AbstractUpdater to update moex stocks."""
     def __call__(self, requester: RequesterProtocol, crud: CRUDProtocol) -> None:
         for stock in requester():
-            crud.post(name=stock[0], description=stock[0], value=stock[1])
+            crud.post(name=stock[0], description=stock[0], value=stock[1], category_id='moex_stock')

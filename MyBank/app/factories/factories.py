@@ -1,8 +1,9 @@
 """The protocol, the abstract class and implementations to create family of objects."""
-import abc
 from typing import Protocol, Type
 
-from app.repositories import RepositoryProtocol, AccountRepository, PropertyRepository
+from app.repositories import (
+    RepositoryProtocol, AccountRepository, PropertyRepository, AssetCategoryRepository
+)
 from app.services import CRUD, ServiceProtocol, Service
 
 
@@ -49,3 +50,8 @@ class AccountFactory(Factory):
 class PropertyFactory(Factory):
     """The implementation of AbstractFactory and FactoryProtocol for Property model."""
     _repository_class: Type[RepositoryProtocol] = PropertyRepository
+
+
+class AssetCategoryFactory(Factory):
+    """The implementation of AbstractFactory and FactoryProtocol for AssetCategory model."""
+    _repository_class: Type[RepositoryProtocol] = AssetCategoryRepository
