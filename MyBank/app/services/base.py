@@ -2,8 +2,8 @@
 
 from typing import Protocol, Any
 
-from .crud import CRUDProtocol
-from .requester import RequesterProtocol, UpdaterProtocol
+from ..repositories import CRUDProtocol
+from .requester import UpdaterProtocol
 
 
 class ServiceProtocol(Protocol):
@@ -11,12 +11,7 @@ class ServiceProtocol(Protocol):
 
 
 class AssetServiceProtocol(ServiceProtocol, Protocol):
-    _requester: RequesterProtocol
-    _updater: UpdaterProtocol
-
-    def request(self) -> list[Any] | dict[str, Any]: ...
-
-    def update(self) -> None: ...
+    updater: UpdaterProtocol
 
 
 class Service:
@@ -27,13 +22,6 @@ class Service:
 
 class AssetService(Service):
 
-    def __init__(self, crud: CRUDProtocol, requester: RequesterProtocol, updater: UpdaterProtocol):
+    def __init__(self, crud: CRUDProtocol, updater: UpdaterProtocol):
         super().__init__(crud)
-        self._requester = requester
-        self._updater = updater
-
-    def request(self) -> list[Any] | dict[str, Any]:
-        return self._requester()
-
-    def update(self) -> None:
-        return self._updater(self._requester, self.crud)
+        self.updater = updater

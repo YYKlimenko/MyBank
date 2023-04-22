@@ -1,8 +1,7 @@
 from typing import Protocol, Type
 
 from . import FactoryProtocol, Factory
-from ..repositories import UserRepository
-from ..services import CounterProtocol, UserServiceProtocol, Counter, CRUD, UserService, Service
+from ..services import CounterProtocol, UserServiceProtocol, Counter, UserService, Service
 
 
 class UserFactoryProtocol(FactoryProtocol):
@@ -21,7 +20,6 @@ class UserFactory(Factory):
     _service: UserServiceProtocol | None = None
     _counter_class: Type[Counter] = Counter
     _counter: CounterProtocol | None = None
-    _repository_class: Type[UserRepository] = UserRepository
 
     @classmethod
     def get_counter(cls) -> CounterProtocol:
@@ -32,6 +30,5 @@ class UserFactory(Factory):
     @classmethod
     def get_service(cls) -> UserServiceProtocol:
         if cls._service is None:
-            crud = CRUD(cls.get_repository())
-            cls._service = cls._service_class(crud, cls.get_counter())
+            cls._service = cls._service_class(cls.get_crud_handler(), cls.get_counter())
         return cls._service

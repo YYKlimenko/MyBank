@@ -6,7 +6,7 @@ class AssetProtocol(Protocol):
 
 
 class AccountProtocol(Protocol):
-    currency: AssetProtocol
+    asset: AssetProtocol
     count: int
 
 
@@ -28,3 +28,18 @@ class UserProtocol(Protocol):
     accounts = Accounts
     properties: Properties
 
+
+class ModelProtocol:
+    class Manager:
+        @staticmethod
+        def filter(*args, **kwargs): ...
+
+        @staticmethod
+        def bulk_create(*args, **kwargs): ...
+
+        @staticmethod
+        def bulk_update(*args, **kwargs): ...
+
+    objects = Manager
+
+    def __call__(self, *args, **kwargs): ...

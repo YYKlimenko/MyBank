@@ -15,23 +15,23 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
 
 
 class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ('id', 'name', 'count', 'user_id', 'currency_id')
+        fields = ('id', 'name', 'count', 'user_id', 'asset_id')
 
 
 class CreatingAccountSerializer(serializers.ModelSerializer):
-    currency_id = serializers.CharField(source='currency')
+    asset_id = serializers.CharField(source='asset')
     user_id = serializers.IntegerField(source='user')
 
     class Meta:
         model = Account
-        fields = ('id', 'name', 'count', 'user_id', 'currency_id')
+        fields = ('id', 'name', 'count', 'user_id', 'asset_id')
 
 
 class PropertySerializer(serializers.ModelSerializer):

@@ -1,21 +1,21 @@
 """The protocol, the abstract class and implementations to create family of objects."""
 from typing import Protocol, Type
 
-from app.repositories import (
-    RepositoryProtocol, AccountRepository, PropertyRepository, AssetCategoryRepository
-)
-from app.services import CRUD, ServiceProtocol, Service
+from app.models import Account, Property, AssetCategory
+from app.models.protocols import ModelProtocol
+from app.repositories import CRUDRepositoryProtocol, CRUDHandler, CRUDProtocol
+from app.services import ServiceProtocol, Service
 
 
 class FactoryProtocol(Protocol):
     """The protocol to implementation in factory classes."""
-    _repository_class: Type[RepositoryProtocol]
+    _repository_class: Type[CRUDRepositoryProtocol]
     _service_class: Type[Service]
-    _repository: RepositoryProtocol | None
+    _repository: CRUDRepositoryProtocol | None
     _service: ServiceProtocol | None
 
     @classmethod
-    def get_repository(cls) -> RepositoryProtocol: ...
+    def get_repository(cls) -> CRUDRepositoryProtocol: ...
 
     @classmethod
     def get_service(cls) -> ServiceProtocol: ...
@@ -23,35 +23,34 @@ class FactoryProtocol(Protocol):
 
 class Factory:
     """The Abstract Factory class to use in implementations."""
-    _repository_class: Type[RepositoryProtocol]
+    _model: ModelProtocol | None = ...
+    _crud_handler: CRUDProtocol | None = None
     _service_class: Type[Service] = Service
-    _repository: RepositoryProtocol | None = None
     _service: ServiceProtocol | None = None
 
     @classmethod
-    def get_repository(cls) -> RepositoryProtocol:
-        if cls._repository is None:
-            cls._repository = cls._repository_class()
-        return cls._repository
+    def get_crud_handler(cls) -> CRUDProtocol:
+        if cls._crud_handler is None:
+            cls._crud_handler = CRUDHandler(cls._model)
+        return cls._crud_handler
 
     @classmethod
     def get_service(cls) -> ServiceProtocol:
         if cls._service is None:
-            crud = CRUD(cls.get_repository())
-            cls._service = cls._service_class(crud)
+            cls._service = cls._service_class(cls.get_crud_handler())
         return cls._service
 
 
 class AccountFactory(Factory):
     """The implementation of AbstractFactory and FactoryProtocol for Account model."""
-    _repository_class: Type[RepositoryProtocol] = AccountRepository
+    _model: ModelProtocol = Account
 
 
 class PropertyFactory(Factory):
     """The implementation of AbstractFactory and FactoryProtocol for Property model."""
-    _repository_class: Type[RepositoryProtocol] = PropertyRepository
+    _model: ModelProtocol = Property
 
 
 class AssetCategoryFactory(Factory):
     """The implementation of AbstractFactory and FactoryProtocol for AssetCategory model."""
-    _repository_class: Type[RepositoryProtocol] = AssetCategoryRepository
+    _model: ModelProtocol = AssetCategory

@@ -1,7 +1,7 @@
 """Protocols and implementations of User service."""
 from typing import Protocol, Any
 
-from .crud import CRUDProtocol
+from ..repositories import CRUDProtocol
 
 from .base import Service, ServiceProtocol
 from ..models import UserProtocol
@@ -26,7 +26,7 @@ class Counter:
     def get_sum(user: UserProtocol) -> dict[str, Any]:
         data = {'accounts': 0, 'properties': 0}
         for account in user.accounts.all():
-            data['accounts'] += account.count * account.currency.value
+            data['accounts'] += account.count * account.asset.value
         for property_ in user.properties.all():
             data['properties'] += property_.value
         data['total'] = sum((data['accounts'], data['properties']))

@@ -17,6 +17,7 @@ class Asset(models.Model):
     description = models.CharField(max_length=250, null=True)
     value = models.DecimalField(max_digits=12, decimal_places=5, null=True)
     category = models.ForeignKey(AssetCategory, on_delete=models.CASCADE, related_name='assets')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, related_name='custom_assets')
 
     def __str__(self):
         return self.name

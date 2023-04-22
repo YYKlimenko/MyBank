@@ -2,7 +2,7 @@
 import abc
 from typing import Protocol, Any
 
-from .crud import CRUDProtocol
+from ..repositories import BulkHandlerProtocol
 
 
 class RequesterProtocol(Protocol):
@@ -14,7 +14,10 @@ class RequesterProtocol(Protocol):
 
 class UpdaterProtocol(Protocol):
     """The protocol to implement in Updater classes."""
-    def __call__(self, requester: RequesterProtocol, crud: CRUDProtocol) -> None: ...
+    _requester: RequesterProtocol
+    _handler: BulkHandlerProtocol
+
+    def __call__(self, init: bool = False) -> None: ...
 
 
 class Requester(abc.ABC):
@@ -26,4 +29,9 @@ class Requester(abc.ABC):
 
 class Updater(abc.ABC):
     """The abstract class to use in implementations of UpdaterProtocol."""
-    def __call__(self, requester: RequesterProtocol, crud: CRUDProtocol) -> None: ...
+
+    def __init__(self, requester: RequesterProtocol, handler: BulkHandlerProtocol):
+        self._requester = requester
+        self._handler = handler
+
+    def __call__(self, init: bool = False) -> None: ...

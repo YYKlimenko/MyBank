@@ -9,3 +9,4 @@ db.sqlite3
 MyBank/app/migrations/000*
 MyBank/static
 *.env
+frontend

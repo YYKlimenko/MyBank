@@ -12,6 +12,8 @@ from ..serializers import (
 from ..services.base import AssetServiceProtocol, ServiceProtocol
 from ..services.user import UserServiceProtocol
 
+from rest_framework.permissions import IsAdminUser
+
 
 class CurrencyView(AssetBaseView):
     """The view class for currencies."""
@@ -30,7 +32,7 @@ class AccountView(BaseView):
     _get_serializer = AccountSerializer
     _post_serializer = CreatingAccountSerializer
     _service: ServiceProtocol = AccountFactory.get_service()
-    permission_classes = [IsAdminOrOwner]
+    permission_classes = [IsAdminUser]
 
     @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_STRING)])
     def get(self, request, *args, **kwargs) -> HttpResponse:
