@@ -39,7 +39,7 @@ class UserService(Service):
         self._counter = counter
 
     def get_sum(self, user_id: int):
-        user = self.crud.get(id=user_id)
+        user = self.crud.get(id=user_id)[0]
         return {
             'username': user.username,
             'result': self._counter.get_sum(user),

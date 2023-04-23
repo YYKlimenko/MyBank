@@ -2,6 +2,7 @@
 from django.http import JsonResponse, HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg.openapi import Parameter, TYPE_STRING, TYPE_INTEGER, IN_QUERY
+from rest_framework.permissions import IsAuthenticated
 
 from . import AssetBaseView, BaseView
 from ..factories import UserFactory, CurrencyFactory, AccountFactory, PropertyFactory, StockFactory
@@ -32,10 +33,11 @@ class AccountView(BaseView):
     _get_serializer = AccountSerializer
     _post_serializer = CreatingAccountSerializer
     _service: ServiceProtocol = AccountFactory.get_service()
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_STRING)])
     def get(self, request, *args, **kwargs) -> HttpResponse:
+        print(request.user)
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=CreatingAccountSerializer)
@@ -56,6 +58,7 @@ class PropertyView(BaseView):
 
     @swagger_auto_schema(manual_parameters=[Parameter('id', IN_QUERY, type=TYPE_INTEGER)])
     def get(self, request, *args, **kwargs):
+        print(request.user)
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=CreatingPropertySerializer)

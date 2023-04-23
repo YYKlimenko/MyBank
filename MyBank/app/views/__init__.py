@@ -1,3 +1,3 @@
 from .base import BaseView, AssetBaseView
 from .model import AccountView, CurrencyView, PropertyView, UserView
-from .functions import count_sum
+from .functions import SumCounter

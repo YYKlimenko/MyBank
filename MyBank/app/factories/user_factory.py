@@ -1,5 +1,7 @@
 from typing import Protocol, Type
 
+from django.contrib.auth import get_user_model
+
 from . import FactoryProtocol, Factory
 from ..services import CounterProtocol, UserServiceProtocol, Counter, UserService, Service
 
@@ -16,6 +18,7 @@ class UserFactoryProtocol(FactoryProtocol):
 
 
 class UserFactory(Factory):
+    _model = get_user_model()
     _service_class: Type[Service] = UserService
     _service: UserServiceProtocol | None = None
     _counter_class: Type[Counter] = Counter

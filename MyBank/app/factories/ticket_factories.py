@@ -33,7 +33,7 @@ class AssetFactoryProtocol(FactoryProtocol, Protocol):
 
 
 class AssetFactory(Factory):
-    _model: Asset | ModelProtocol
+    _model: ModelProtocol = Asset
     _service_class: Type[AssetService] = AssetService
     _service: AssetServiceProtocol | None = None
     _bulk_handler_class: Type[BulkHandler] = BulkHandler
