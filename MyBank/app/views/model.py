@@ -2,7 +2,7 @@
 from django.http import JsonResponse, HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg.openapi import Parameter, TYPE_STRING, TYPE_INTEGER, IN_QUERY
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from . import AssetBaseView, BaseView
 from ..factories import UserFactory, CurrencyFactory, AccountFactory, PropertyFactory, StockFactory
@@ -18,13 +18,14 @@ class CurrencyView(AssetBaseView):
     """The view class for currencies."""
     _service: AssetServiceProtocol = CurrencyFactory.get_service()
     _category_name: str = 'currency'
-    permission_classes = {'POST': IsAuthenticated}
+    permission_classes = {'POST': IsAdminUser, 'PUT': IsAdminUser, 'DELETE': IsAdminUser}
 
 
 class MoexStockView(AssetBaseView):
     """The view class for moex stocks."""
     _service: AssetServiceProtocol = StockFactory.get_service()
     _category_name: str = 'moex_stock'
+    permission_classes = {'POST': IsAdminUser, 'PUT': IsAdminUser, 'DELETE': IsAdminUser}
 
 
 class AccountView(BaseView):
@@ -32,11 +33,12 @@ class AccountView(BaseView):
     _get_serializer = AccountSerializer
     _post_serializer = CreatingAccountSerializer
     _service: ServiceProtocol = AccountFactory.get_service()
-    permission_classes = [IsAuthenticated]
+    permission_classes = {
+        'GET': IsAdminOrOwner, 'POST': IsAuthenticated, 'PUT': IsAdminOrOwner, 'DELETE': IsAdminOrOwner
+    }
 
     @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_STRING)])
     def get(self, request, *args, **kwargs) -> HttpResponse:
-        print(request.user)
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=CreatingAccountSerializer)
@@ -53,7 +55,9 @@ class PropertyView(BaseView):
     _get_serializer = PropertySerializer
     _post_serializer = CreatingPropertySerializer
     _service: ServiceProtocol = PropertyFactory.get_service()
-    permission_classes = [IsAdminOrOwner]
+    permission_classes = {
+        'GET': IsAdminOrOwner, 'POST': IsAuthenticated, 'PUT': IsAdminOrOwner, 'DELETE': IsAdminOrOwner
+    }
 
     @swagger_auto_schema(manual_parameters=[Parameter('id', IN_QUERY, type=TYPE_INTEGER)])
     def get(self, request, *args, **kwargs):
@@ -69,9 +73,6 @@ class UserView(BaseView):
     """The view class for the User model."""
     _get_serializer = UserSerializer
     _service: UserServiceProtocol = UserFactory.get_service()
-    permission_classes = [IsAdminOrUser]
-
-
-def count_sum(request, *args, **kwargs):
-    service: UserServiceProtocol = UserFactory.get_service()
-    return JsonResponse(service.get_sum(user_id=kwargs['user_id']))
+    permission_classes = {
+        'GET': IsAdminOrOwner, 'PUT': IsAdminOrOwner, 'DELETE': IsAdminOrOwner
+    }

@@ -11,6 +11,13 @@ class AssetSerializer(serializers.ModelSerializer):
         fields = ('name', 'value')
 
 
+class CreatingUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
+
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:

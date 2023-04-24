@@ -9,11 +9,8 @@ from app.serializers import AssetSerializer
 from app.services import ServiceProtocol, AssetServiceProtocol
 
 
-class BaseView(APIView):
-    """BaseView to use in concrete views."""
-    _get_serializer = ...
-    _post_serializer = ...
-    _service: ServiceProtocol = ...
+class PermitView(APIView):
+    """The base view class having the upgraded permission system"""
 
     def get_permissions(self):
         return {key: permission() for key, permission in self.permission_classes.items()}
@@ -25,6 +22,13 @@ class BaseView(APIView):
             self.permission_denied(
                 request, message=getattr(permission, 'message', None)
             )
+
+
+class BaseView(PermitView):
+    """BaseView to use in concrete views."""
+    _get_serializer = ...
+    _post_serializer = ...
+    _service: ServiceProtocol = ...
 
     def get(self, request, *args, **kwargs):
         filter_fields = {key: request.query_params[key] for key in request.query_params}
@@ -82,5 +86,5 @@ class AssetBaseView(BaseView):
         if pk and self._post_serializer(data=request.data).is_valid():
             self._service.crud.update(pk=pk, data=request.data)
         else:
-            self._service.update()
+            self._service.updater()
         return HttpResponse('Done', status=201)
