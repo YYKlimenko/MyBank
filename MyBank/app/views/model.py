@@ -2,7 +2,7 @@
 from django.http import JsonResponse, HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg.openapi import Parameter, TYPE_STRING, TYPE_INTEGER, IN_QUERY
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from . import AssetBaseView, BaseView
 from ..factories import UserFactory, CurrencyFactory, AccountFactory, PropertyFactory, StockFactory
@@ -13,13 +13,12 @@ from ..serializers import (
 from ..services.base import AssetServiceProtocol, ServiceProtocol
 from ..services.user import UserServiceProtocol
 
-from rest_framework.permissions import IsAdminUser
-
 
 class CurrencyView(AssetBaseView):
     """The view class for currencies."""
     _service: AssetServiceProtocol = CurrencyFactory.get_service()
     _category_name: str = 'currency'
+    permission_classes = {'POST': IsAuthenticated}
 
 
 class MoexStockView(AssetBaseView):

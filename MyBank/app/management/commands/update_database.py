@@ -16,4 +16,4 @@ class Command(BaseCommand):
         ]
 
         for service in services:
-            service.update()
+            service.updater(init=True)

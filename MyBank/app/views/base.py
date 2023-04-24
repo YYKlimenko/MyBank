@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from drf_yasg.openapi import Parameter, IN_QUERY, TYPE_STRING
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,6 +14,17 @@ class BaseView(APIView):
     _get_serializer = ...
     _post_serializer = ...
     _service: ServiceProtocol = ...
+
+    def get_permissions(self):
+        return {key: permission() for key, permission in self.permission_classes.items()}
+
+    def check_permissions(self, request):
+        method = request.method
+        permission = self.get_permissions().get(method, AllowAny())
+        if not permission.has_permission(request, self):
+            self.permission_denied(
+                request, message=getattr(permission, 'message', None)
+            )
 
     def get(self, request, *args, **kwargs):
         filter_fields = {key: request.query_params[key] for key in request.query_params}
