@@ -4,6 +4,7 @@ from typing import Any, Protocol
 from django.db import models
 from django.db.models import QuerySet
 
+from app.models import Asset
 from app.models.protocols import ModelProtocol
 
 

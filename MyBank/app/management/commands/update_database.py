@@ -12,7 +12,8 @@ class Command(BaseCommand):
             category_service.crud.post(name=category_name)
 
         services:  list[AssetServiceProtocol] = [
-            CurrencyFactory.get_service(), StockFactory.get_service(),
+            CurrencyFactory.get_service(),
+            StockFactory.get_service(),
         ]
 
         for service in services:

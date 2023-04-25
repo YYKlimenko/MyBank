@@ -29,7 +29,7 @@ class UserProtocol(Protocol):
     properties: Properties
 
 
-class ModelProtocol:
+class ModelProtocol(Protocol):
     class Manager:
         @staticmethod
         def filter(*args, **kwargs): ...
@@ -43,3 +43,11 @@ class ModelProtocol:
     objects = Manager
 
     def __call__(self, *args, **kwargs): ...
+
+
+class UserModelProtocol(ModelProtocol, Protocol):
+    class Manager(ModelProtocol.Manager):
+        @staticmethod
+        def create_user(*args, **kwargs) -> None: ...
+
+    objects = Manager

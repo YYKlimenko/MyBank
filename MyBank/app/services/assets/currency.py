@@ -26,6 +26,7 @@ class CurrencyUpdater:
 
     def __call__(self, init: bool = False) -> None:
         data = self._requester()
+        data.pop('USD')
         main_currencies = {'USD': data.pop('RUB'), 'RUB': 1}
         bulk = [
             {
