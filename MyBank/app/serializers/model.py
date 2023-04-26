@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from app.models import Asset, Account, Property
@@ -15,14 +16,17 @@ class CreatingUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'first_name', 'last_name', 'email')
+        fields = ('password', 'username', 'first_name', 'last_name', 'email')
+
+    def validate_password(self, value: str) -> str:
+        return make_password(value)
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'first_name', 'last_name', 'email')
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'is_active')
 
 
 class AccountSerializer(serializers.ModelSerializer):

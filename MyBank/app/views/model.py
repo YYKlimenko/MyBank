@@ -1,4 +1,5 @@
 """The View classes."""
+from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse, HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg.openapi import Parameter, TYPE_STRING, TYPE_INTEGER, IN_QUERY
@@ -10,6 +11,7 @@ from ..permissions import IsAdminOrOwner, IsAdminOrUser
 from ..serializers import (
     AccountSerializer, CreatingAccountSerializer, UserSerializer, PropertySerializer, CreatingPropertySerializer
 )
+from ..serializers.model import CreatingUserSerializer
 from ..services.base import AssetServiceProtocol, ServiceProtocol
 from ..services.user import UserServiceProtocol
 
@@ -61,7 +63,6 @@ class PropertyView(BaseView):
 
     @swagger_auto_schema(manual_parameters=[Parameter('id', IN_QUERY, type=TYPE_INTEGER)])
     def get(self, request, *args, **kwargs):
-        print(request.user)
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=CreatingPropertySerializer)
@@ -72,7 +73,16 @@ class PropertyView(BaseView):
 class UserView(BaseView):
     """The view class for the User model."""
     _get_serializer = UserSerializer
+    _post_serializer = CreatingUserSerializer
     _service: UserServiceProtocol = UserFactory.get_service()
     permission_classes = {
-        'GET': IsAdminOrOwner, 'PUT': IsAdminOrOwner, 'DELETE': IsAdminOrOwner
+        'GET': IsAdminOrUser, 'PUT': IsAdminOrOwner, 'DELETE': IsAdminOrOwner
     }
+
+    @swagger_auto_schema(manual_parameters=[Parameter('username', IN_QUERY, type=TYPE_STRING)])
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(request_body=CreatingUserSerializer)
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)

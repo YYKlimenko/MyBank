@@ -9,4 +9,3 @@ class UserCrudHandler(CRUDHandler):
 
     def post(self, **fields) -> None:
         self.model.objects.create_user(**fields)
-        

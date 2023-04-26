@@ -34,6 +34,7 @@ class Counter:
 
 
 class UserService(Service):
+
     def __init__(self, crud: CRUDProtocol, counter: CounterProtocol):
         super().__init__(crud)
         self._counter = counter

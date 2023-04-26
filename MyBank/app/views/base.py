@@ -36,8 +36,9 @@ class BaseView(PermitView):
         return Response(status=200, data=self._get_serializer(instances, many=True).data)
 
     def post(self, request, *args, **kwargs) -> HttpResponse:
-        if self._post_serializer(data=request.data).is_valid():
-            self._service.crud.post(**request.data)
+        object_ = self._post_serializer(data=request.data)
+        if object_.is_valid():
+            self._service.crud.post(**object_.validated_data)
             return HttpResponse('Done', status=201)
         else:
             return HttpResponseBadRequest('Data is not valid')
