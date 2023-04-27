@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from app.serializers import AssetSerializer
+from app.serializers.protcols import SerializerProtocol
 from app.services import ServiceProtocol, AssetServiceProtocol
 
 
@@ -26,14 +27,13 @@ class PermitView(APIView):
 
 class BaseView(PermitView):
     """BaseView to use in concrete views."""
-    _get_serializer = ...
-    _post_serializer = ...
+    _get_serializer: SerializerProtocol = ...
+    _post_serializer: SerializerProtocol = ...
     _service: ServiceProtocol = ...
 
     def get(self, request, *args, **kwargs):
         filter_fields = {key: request.query_params[key] for key in request.query_params}
         data = self._service.crud.get(**filter_fields, serializer=self._get_serializer, many=True)
-        print("==============")
         return Response(status=200, data=data)
 
     def post(self, request, *args, **kwargs) -> HttpResponse:
@@ -61,8 +61,8 @@ class BaseView(PermitView):
 
 class AssetBaseView(BaseView):
     """BaseView to use in concrete views with TicketService."""
-    _get_serializer = AssetSerializer
-    _post_serializer = AssetSerializer
+    _get_serializer: SerializerProtocol = AssetSerializer
+    _post_serializer: SerializerProtocol = AssetSerializer
     _service: AssetServiceProtocol = ...
     _category_name: str = ...
 

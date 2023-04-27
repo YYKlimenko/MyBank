@@ -1,4 +1,4 @@
-from .views import CurrencyView, AccountView, UserView, SumCounter, PropertyView
+from .views import CurrencyView, AccountView, UserCRUDView, UserSumView, PropertyView
 from django.urls import path
 
 from .views.model import MoexStockView
@@ -6,9 +6,9 @@ from .views.model import MoexStockView
 urlpatterns = [
     path('api/v1/accounts/', AccountView.as_view()),
 
-    path('api/v1/users/', UserView.as_view()),
+    path('api/v1/users/', UserCRUDView.as_view()),
 
-    path('api/v1/sum/<int:user_id>/', SumCounter.as_view()),
+    path('api/v1/sum/<int:user_id>/', UserSumView.as_view()),
 
     path('api/v1/currencies/', CurrencyView.as_view()),
 
