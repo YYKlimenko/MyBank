@@ -12,7 +12,7 @@ class CRUDProtocol(Protocol):
     """CRUD protocol to make create, retrieve, update, delete operations."""
     model: ModelProtocol
 
-    def get(self, many=False, prefetch_all=True, **filter_fields) -> Any: ...
+    def get(self, serializer, many=False, prefetch_all=True, **filter_fields) -> Any: ...
 
     def post(self, **fields) -> None: ...
 
@@ -38,21 +38,21 @@ class CRUDHandler:
     def __init__(self, model: ModelProtocol):
         self.model: ModelProtocol = model
 
-    def get(self, many: bool = True, prefetch_all=False, **filter_fields) -> QuerySet:
+    def get(self, serializer, many: bool = True, prefetch_all=False, **filter_fields) -> QuerySet:
         instances = self.model.objects.filter(**filter_fields).select_related()
         if prefetch_all:
             instances = instances.prefetch_related()
-        return instances if many else instances[0]
+        return serializer(instances, many=True).data if many else serializer(instances[0]).data
 
     def post(self, **fields) -> None:
         instance = self.model(**fields)
         instance.save()
 
     def delete(self, pk: int | str) -> None:
-        self.get(pk=pk).delete()
+        self.model.objects.get(pk=pk).delete()
 
     def update(self, pk: int | str, data: dict[str, Any]):
-        self.get(pk=pk).update(**data)
+        self.model.objects.get(pk=pk).update(**data)
 
 
 class BulkHandler:

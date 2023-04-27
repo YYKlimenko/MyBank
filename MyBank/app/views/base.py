@@ -32,8 +32,9 @@ class BaseView(PermitView):
 
     def get(self, request, *args, **kwargs):
         filter_fields = {key: request.query_params[key] for key in request.query_params}
-        instances = self._service.crud.get(**filter_fields, many=True)
-        return Response(status=200, data=self._get_serializer(instances, many=True).data)
+        data = self._service.crud.get(**filter_fields, serializer=self._get_serializer, many=True)
+        print("==============")
+        return Response(status=200, data=data)
 
     def post(self, request, *args, **kwargs) -> HttpResponse:
         object_ = self._post_serializer(data=request.data)
@@ -68,8 +69,10 @@ class AssetBaseView(BaseView):
     @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_STRING)])
     def get(self, request, *args, **kwargs):
         filter_fields = {key: request.query_params[key] for key in request.query_params}
-        instances = self._service.crud.get(category_id=self._category_name, **filter_fields, many=True)
-        return Response(status=200, data=self._get_serializer(instances, many=True).data)
+        data = self._service.crud.get(
+            category_id=self._category_name, serializer=self._get_serializer, **filter_fields, many=True
+        )
+        return Response(status=200, data=data)
 
     @swagger_auto_schema(request_body=AssetSerializer)
     def post(self, request, *args, **kwargs) -> HttpResponse:

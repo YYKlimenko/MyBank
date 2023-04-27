@@ -35,6 +35,9 @@ class ModelProtocol(Protocol):
         def filter(*args, **kwargs): ...
 
         @staticmethod
+        def get(*args, **kwargs): ...
+
+        @staticmethod
         def bulk_create(*args, **kwargs): ...
 
         @staticmethod
