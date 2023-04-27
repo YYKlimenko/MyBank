@@ -1,18 +1,19 @@
 """The Base Class to handle operations with DB."""
-from typing import Any, Protocol
+from typing import Any, Protocol, Type
 
 from django.db import models
 from django.db.models import QuerySet
 
 from app.models import Asset
 from app.models.protocols import ModelProtocol
+from app.serializers.protcols import SerializerProtocol
 
 
 class CRUDProtocol(Protocol):
     """CRUD protocol to make create, retrieve, update, delete operations."""
     model: ModelProtocol
 
-    def get(self, serializer, many=False, prefetch_all=True, **filter_fields) -> Any: ...
+    def get(self, serializer: SerializerProtocol, many=False, prefetch_all=True, **filter_fields) -> Any: ...
 
     def post(self, **fields) -> None: ...
 
@@ -38,7 +39,9 @@ class CRUDHandler:
     def __init__(self, model: ModelProtocol):
         self.model: ModelProtocol = model
 
-    def get(self, serializer, many: bool = True, prefetch_all=False, **filter_fields) -> QuerySet:
+    def get(
+            self, serializer: SerializerProtocol, many: bool = True, prefetch_all=False, **filter_fields
+    ) -> dict[str, Any]:
         instances = self.model.objects.filter(**filter_fields).select_related()
         if prefetch_all:
             instances = instances.prefetch_related()
