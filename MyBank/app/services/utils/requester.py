@@ -2,7 +2,7 @@
 import abc
 from typing import Protocol, Any
 
-from ..repositories import BulkHandlerProtocol
+from ...repositories import BulkHandlerProtocol
 
 
 class RequesterProtocol(Protocol):

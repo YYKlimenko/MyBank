@@ -10,8 +10,8 @@ from ..services import (
     AssetServiceProtocol, RequesterProtocol, UpdaterProtocol, AssetService,
     CurrencyRequester, CurrencyUpdater
 )
-from ..services.requester import Requester, Updater
-from ..services.assets import MoexStockRequester, MoexStockUpdater
+from ..services.utils import Requester, Updater
+from ..services.model import MoexStockRequester, MoexStockUpdater
 
 
 class AssetFactoryProtocol(FactoryProtocol, Protocol):

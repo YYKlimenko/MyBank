@@ -1,4 +1,4 @@
-from app.services import Service
+from ..base import Service
 
 
 class AssetCategoryServie(Service):

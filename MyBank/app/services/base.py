@@ -1,9 +1,9 @@
 """Protocols and implementations for common Service."""
 
-from typing import Protocol, Any
+from typing import Protocol
 
 from ..repositories import CRUDProtocol
-from .requester import UpdaterProtocol
+from .utils import UpdaterProtocol
 
 
 class ServiceProtocol(Protocol):

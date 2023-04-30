@@ -1,10 +1,12 @@
 """Protocols and implementations of User service."""
 from typing import Protocol, Any
 
-from ..repositories import CRUDProtocol
+from ...repositories import CRUDProtocol
 
-from .base import Service, ServiceProtocol
-from ..models import UserProtocol
+from ..base import Service, ServiceProtocol
+from ...models import UserProtocol
+from ...serializers import UserSerializer
+from ...serializers.protcols import SerializerProtocol
 
 
 class CounterProtocol(Protocol):
@@ -34,13 +36,14 @@ class Counter:
 
 
 class UserService(Service):
+    _get_serializer: SerializerProtocol = UserSerializer
 
     def __init__(self, crud: CRUDProtocol, counter: CounterProtocol):
         super().__init__(crud)
         self._counter = counter
 
     def get_sum(self, user_id: int):
-        user = self.crud.get(id=user_id)[0]
+        user = self.crud.get(id=user_id, serializer=self._get_serializer)[0]
         return {
             'username': user.username,
             'result': self._counter.get_sum(user),

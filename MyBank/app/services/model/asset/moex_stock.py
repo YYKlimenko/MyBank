@@ -4,8 +4,8 @@ from typing import Any
 import requests
 from django.conf import settings
 
-from ..requester import RequesterProtocol
-from ...repositories import BulkHandlerProtocol
+from app.repositories import BulkHandlerProtocol
+from ...utils import RequesterProtocol
 
 
 class MoexStockRequester:

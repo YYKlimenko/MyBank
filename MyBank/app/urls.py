@@ -15,7 +15,4 @@ urlpatterns = [
     path('api/v1/moex_stocks/', MoexStockView.as_view()),
 
     path('api/v1/properties/', PropertyView.as_view()),
-
-
-
 ]
