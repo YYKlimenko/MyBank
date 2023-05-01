@@ -1,11 +1,6 @@
 """The Base Class to handle operations with DB."""
-from typing import Any, Protocol, Type
+from typing import Any, Protocol
 
-from django.contrib.auth import get_user_model
-from django.db import models
-from django.db.models import QuerySet, Sum
-
-from app.models import Asset, Account
 from app.models.protocols import ModelProtocol
 from app.serializers.protcols import SerializerProtocol
 
