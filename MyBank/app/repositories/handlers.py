@@ -1,10 +1,11 @@
 """The Base Class to handle operations with DB."""
 from typing import Any, Protocol, Type
 
+from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Sum
 
-from app.models import Asset
+from app.models import Asset, Account
 from app.models.protocols import ModelProtocol
 from app.serializers.protcols import SerializerProtocol
 
@@ -69,3 +70,9 @@ class BulkHandler:
 
     def update(self, bulk: list[Any]) -> None:
         self.model.objects.bulk_update([self.model(**kwargs) for kwargs in bulk])
+
+
+class CounterProtocol(Protocol):
+    model: ModelProtocol
+
+    def get_sum(self, user_id: int) -> dict[str, Any]: ...

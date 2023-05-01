@@ -37,8 +37,8 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class CreatingAccountSerializer(serializers.ModelSerializer):
-    asset_id = serializers.CharField(source='asset')
-    user_id = serializers.IntegerField(source='user')
+    asset_id = serializers.CharField()
+    user_id = serializers.IntegerField()
 
     class Meta:
         model = Account
@@ -53,7 +53,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
 
 class CreatingPropertySerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(source='user')
+    user_id = serializers.IntegerField()
 
     class Meta:
         model = Property

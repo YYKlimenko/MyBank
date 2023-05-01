@@ -16,7 +16,7 @@ class UserSumView(PermitView):
     permission_classes = {'GET': IsAdminOrUser}
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse(self.service.get_sum(user_id=kwargs['user_id']))
+        return JsonResponse(self.service.counter.get_sum(user_id=kwargs['user_id']))
 
 
 class UserCRUDView(BaseView):
