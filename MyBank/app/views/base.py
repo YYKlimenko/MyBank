@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from app.serializers import AssetSerializer
-from app.serializers.protcols import SerializerProtocol
+from app.serializers.protocols import SerializerProtocol
 from app.services import ServiceProtocol, AssetServiceProtocol
 
 

@@ -2,7 +2,7 @@
 from typing import Any, Protocol
 
 from app.models.protocols import ModelProtocol
-from app.serializers.protcols import SerializerProtocol
+from app.serializers.protocols import SerializerProtocol
 
 
 class CRUDProtocol(Protocol):
