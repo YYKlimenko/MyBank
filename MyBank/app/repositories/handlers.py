@@ -51,7 +51,7 @@ class CRUDHandler:
         self.model.objects.get(pk=pk).delete()
 
     def update(self, pk: int | str, data: dict[str, Any]):
-        self.model.objects.get(pk=pk).update(**data)
+        self.model.objects.filter(pk=pk).update(**data)
 
 
 class BulkHandler:

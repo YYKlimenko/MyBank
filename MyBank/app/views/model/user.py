@@ -1,5 +1,5 @@
-from django.http import JsonResponse
-from drf_yasg.openapi import Parameter, IN_QUERY, TYPE_STRING
+from django.http import JsonResponse, HttpResponse
+from drf_yasg.openapi import Parameter, IN_QUERY, TYPE_STRING, TYPE_INTEGER, IN_BODY
 from drf_yasg.utils import swagger_auto_schema
 
 from app.factories import UserFactory
@@ -29,9 +29,21 @@ class UserCRUDView(BaseView):
     }
 
     @swagger_auto_schema(manual_parameters=[Parameter('username', IN_QUERY, type=TYPE_STRING)])
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=CreatingUserSerializer)
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs) -> HttpResponse:
         return super().post(request, *args, **kwargs)
+
+    @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_INTEGER)])
+    def delete(self, request, *args, **kwargs) -> HttpResponse:
+        return super().delete(request, *args, **kwargs)
+
+    @swagger_auto_schema(manual_parameters=[
+        Parameter('pk', IN_QUERY, type=TYPE_INTEGER),
+    ],
+        request_body=CreatingUserSerializer)
+    def put(self, request, *args, **kwargs) -> HttpResponse:
+        return super().put(request, *args, **kwargs)
+

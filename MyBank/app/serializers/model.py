@@ -13,13 +13,17 @@ class AssetSerializer(serializers.ModelSerializer):
 
 
 class CreatingUserSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField()
 
     class Meta:
         model = get_user_model()
-        fields = ('password', 'username', 'first_name', 'last_name', 'email')
+        fields = ('password', 'password2', 'username', 'first_name', 'last_name', 'email')
 
-    def validate_password(self, value: str) -> str:
-        return make_password(value)
+    def validate(self, data):
+        if data['password'] != data.pop('password2'):
+            raise serializers.ValidationError("Passwords don't match")
+        data['password'] = make_password(data['password'])
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):
