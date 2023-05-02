@@ -7,7 +7,7 @@ class IsAdminOrUser(permissions.BasePermission):
         if request.user.id and (
                 request.user.is_staff or
                 request.user.username == request.query_params.get('username') or
-                request.user.id == request.parser_context['kwargs']['user_id']
+                request.user.id == request.parser_context['kwargs'].get('user_id')
         ):
             return True
 
