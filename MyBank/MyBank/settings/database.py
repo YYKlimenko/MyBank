@@ -1,7 +1,6 @@
 """All settings to connect to the Databases."""
 import os
 
-from .main import BASE_DIR, DEBUG
 
 DATABASES = {
     'develop': {
@@ -17,4 +16,3 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT'),
     }
 }
-DATABASES['default'] = DATABASES['develop'] if DEBUG else DATABASES['production']

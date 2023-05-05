@@ -1,3 +1,5 @@
+import logging
+
 from django.http import HttpResponse
 from drf_yasg.openapi import Parameter, TYPE_INTEGER, IN_QUERY
 from drf_yasg.utils import swagger_auto_schema
@@ -9,6 +11,9 @@ from app.serializers import PropertySerializer, CreatingPropertySerializer
 from app.serializers.model import UpdatingPropertySerializer
 from app.services import ServiceProtocol
 from app.views import BaseView
+
+
+logger = logging.getLogger(__name__)
 
 
 class PropertyView(BaseView):

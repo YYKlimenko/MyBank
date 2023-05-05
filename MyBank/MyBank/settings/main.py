@@ -2,12 +2,6 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-
-DEBUG = True
-if DEBUG:
-    load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -92,27 +86,3 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
     "AUTH",
 ]
-
-
-LOGGING = {
-    'version': 1,
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        }
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-        }
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-            'propagate': True
-        }
-    }
-}
