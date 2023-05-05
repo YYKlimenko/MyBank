@@ -1,10 +1,10 @@
 from django.http import HttpResponse
 from drf_yasg.openapi import Parameter, TYPE_STRING, TYPE_INTEGER, IN_QUERY
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from app.factories import AccountFactory
-from app.permissions import IsAdminOrOwner
+from app.permissions import IsUser
 from app.serializers import AccountSerializer, CreatingAccountSerializer
 from app.services import ServiceProtocol
 from app.views import BaseView
@@ -12,11 +12,14 @@ from app.views import BaseView
 
 class AccountView(BaseView):
     """The view class for the Account model."""
-    _get_serializer = AccountSerializer
-    _post_serializer = CreatingAccountSerializer
-    _service: ServiceProtocol = AccountFactory.get_service()
+    get_serializer = AccountSerializer
+    post_serializer = CreatingAccountSerializer
+    service: ServiceProtocol = AccountFactory.get_service()
     permission_classes = {
-        'GET': IsAdminOrOwner, 'POST': IsAuthenticated, 'PUT': IsAdminOrOwner, 'DELETE': IsAdminOrOwner
+        'GET': (IsAdminUser, IsUser),
+        'POST': (IsAuthenticated,),
+        'PUT': (IsAdminUser, IsUser),
+        'DELETE': (IsAdminUser, IsUser),
     }
 
     @swagger_auto_schema(manual_parameters=[Parameter('pk', IN_QUERY, type=TYPE_STRING)])

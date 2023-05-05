@@ -8,7 +8,7 @@ urlpatterns = [
 
     path('api/v1/users/', UserCRUDView.as_view()),
 
-    path('api/v1/sum/<int:user_id>/', UserSumView.as_view()),
+    path('api/v1/sum/', UserSumView.as_view()),
 
     path('api/v1/currencies/', CurrencyView.as_view()),
 

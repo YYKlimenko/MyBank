@@ -1,19 +1,22 @@
 from rest_framework import permissions
 
 
-class IsAdminOrUser(permissions.BasePermission):
+class IsUser(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if request.user.id and (
-                request.user.is_staff or
                 request.user.username == request.query_params.get('username') or
-                request.user.id == request.parser_context['kwargs'].get('user_id')
+                request.user.id == request.query_params.get('user_id')
         ):
             return True
 
 
-class IsAdminOrOwner(permissions.BasePermission):
+class IsRelationUser(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        if request.user.id and (request.user.is_staff or request.user.id == request.query_params.get('user_id')):
-            return True
+        if request.user.id:
+            instance = view.service.crud.get(
+                pk=request.query_params.get('pk'),
+                serializer=view.get_serializer,
+            )
+            return request.user.id == instance['user_id']

@@ -7,13 +7,13 @@ from app.views import AssetBaseView
 
 class CurrencyView(AssetBaseView):
     """The view class for currencies."""
-    _service: AssetServiceProtocol = CurrencyFactory.get_service()
+    service: AssetServiceProtocol = CurrencyFactory.get_service()
     _category_name: str = 'currency'
-    permission_classes = {'POST': IsAdminUser, 'PUT': IsAdminUser, 'DELETE': IsAdminUser}
+    permission_classes = {'POST': (IsAdminUser,), 'PUT': (IsAdminUser,), 'DELETE': (IsAdminUser,)}
 
 
 class MoexStockView(AssetBaseView):
     """The view class for moex stocks."""
-    _service: AssetServiceProtocol = StockFactory.get_service()
+    service: AssetServiceProtocol = StockFactory.get_service()
     _category_name: str = 'moex_stock'
-    permission_classes = {'POST': IsAdminUser, 'PUT': IsAdminUser, 'DELETE': IsAdminUser}
+    permission_classes = {'POST': (IsAdminUser,), 'PUT': (IsAdminUser,), 'DELETE': (IsAdminUser,)}

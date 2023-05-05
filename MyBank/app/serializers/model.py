@@ -62,3 +62,9 @@ class CreatingPropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = ('name', 'user_id', 'value', 'description')
+
+
+class UpdatingPropertySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Property
+        fields = ('name', 'value', 'description')
