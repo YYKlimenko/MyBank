@@ -1,5 +1,5 @@
 from django.http import JsonResponse, HttpResponse
-from drf_yasg.openapi import Parameter, IN_QUERY, TYPE_STRING, TYPE_INTEGER, IN_BODY
+from drf_yasg.openapi import Parameter, IN_QUERY, TYPE_STRING, TYPE_INTEGER
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAdminUser
 
@@ -48,4 +48,3 @@ class UserCRUDView(BaseView):
         request_body=CreatingUserSerializer)
     def put(self, request, *args, **kwargs) -> HttpResponse:
         return super().put(request, *args, **kwargs)
-
