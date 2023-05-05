@@ -57,3 +57,4 @@ websocket-client==0.59.0
 django-cors-headers==3.14.0
 djangorestframework-simplejwt==5.2.2
 flake8==6.0.0
+mypy==1.2.0
