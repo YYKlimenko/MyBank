@@ -3,7 +3,7 @@ if DEBUG:
     from dotenv import load_dotenv
     load_dotenv()
 
-from .api import CURRENCIES_API_URL, STOCK_API_URL
+from .api import CURRENCIES_API_URL, MOEX_STOCK_API_URL
 from .authentication import AUTH_PASSWORD_VALIDATORS, REST_FRAMEWORK, SIMPLE_JWT
 from .celery import CELERY_BROKER_URL
 from .database import DATABASES

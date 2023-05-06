@@ -1,1 +1,2 @@
-from .requester import RequesterProtocol, UpdaterProtocol, Requester, Updater
+from .requester import RequesterProtocol, Requester
+from .updater import UpdaterProtocol, Updater

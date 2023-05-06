@@ -1,4 +1,4 @@
 import os
 
 CURRENCIES_API_URL = os.getenv('CURRENCIES_API_URL')
-STOCK_API_URL = os.getenv('STOCK_API_URL')
+MOEX_STOCK_API_URL = os.getenv('MOEX_STOCK_API_URL')

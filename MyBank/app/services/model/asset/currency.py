@@ -4,16 +4,15 @@ from typing import Any
 import requests  # type: ignore
 from django.conf import settings  # type: ignore
 
-from ...utils import RequesterProtocol
+from ...utils import RequesterProtocol, Requester
 from ....repositories import BulkHandlerProtocol
 
 
-class CurrencyRequester:
+class CurrencyRequester(Requester):
     """The implementation of AbstractRequester for Currency."""
-    _URL = settings.CURRENCIES_API_URL
 
     def __call__(self) -> list[Any] | dict[str, Any]:
-        currencies = requests.get(self._URL).json()['rates']
+        currencies = requests.get(self._url).json()['rates']
         return currencies
 
 
@@ -25,7 +24,7 @@ class CurrencyUpdater:
         self._handler = handler
 
     def __call__(self, init: bool = False) -> None:
-        data:  = self._requester()
+        data = self._requester()
         data.pop('USD')
         main_currencies = {'USD': data.pop('RUB'), 'RUB': 1}
         bulk = [
