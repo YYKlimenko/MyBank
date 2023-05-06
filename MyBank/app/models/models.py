@@ -1,5 +1,5 @@
-from django.contrib.auth import get_user_model
-from django.db import models
+from django.contrib.auth import get_user_model  # type: ignore
+from django.db import models # type: ignore
 
 from .protocols import UserProtocol
 

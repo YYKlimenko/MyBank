@@ -16,21 +16,21 @@ class PropertyProtocol(Protocol):
 
 class UserProtocol(Protocol):
 
-    class Accounts:
+    class Accounts(Protocol):
         @staticmethod
         def all() -> list[AccountProtocol]: ...
 
-    class Properties:
+    class Properties(Protocol):
         @staticmethod
         def all() -> list[PropertyProtocol]: ...
 
     username: str
-    accounts = Accounts
+    accounts: Accounts = Accounts
     properties: Properties
 
 
 class ModelProtocol(Protocol):
-    class Manager:
+    class Manager(Protocol):
         @staticmethod
         def filter(*args, **kwargs): ...
 
@@ -43,14 +43,14 @@ class ModelProtocol(Protocol):
         @staticmethod
         def bulk_update(*args, **kwargs): ...
 
-    objects = Manager
+    objects: Manager = Manager
 
     def __call__(self, *args, **kwargs): ...
 
 
 class UserModelProtocol(ModelProtocol, Protocol):
-    class Manager(ModelProtocol.Manager):
+    class Manager(ModelProtocol.Manager, Protocol):
         @staticmethod
         def create_user(*args, **kwargs) -> None: ...
 
-    objects = Manager
+    objects: Manager = Manager

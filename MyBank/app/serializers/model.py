@@ -1,6 +1,6 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
-from rest_framework import serializers
+from django.contrib.auth import get_user_model  # type: ignore
+from django.contrib.auth.hashers import make_password  # type: ignore
+from rest_framework import serializers  # type: ignore
 
 from app.models import Asset, Account, Property
 

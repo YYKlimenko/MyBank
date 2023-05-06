@@ -1,6 +1,6 @@
 from typing import Any
 
-from django.db.models import Sum, F
+from django.db.models import Sum, F  # type: ignore
 
 from app.models.protocols import UserModelProtocol
 from app.repositories import CRUDHandler

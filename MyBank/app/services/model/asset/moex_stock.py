@@ -1,8 +1,8 @@
 """Protocols and implementations of Moex stocks service."""
 from typing import Any
 
-import requests
-from django.conf import settings
+import requests  # type: ignore
+from django.conf import settings  # type: ignore
 
 from app.repositories import BulkHandlerProtocol
 from ...utils import RequesterProtocol

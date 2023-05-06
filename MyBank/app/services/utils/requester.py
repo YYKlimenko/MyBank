@@ -24,6 +24,7 @@ class Requester(abc.ABC):
     """The abstract class to use in implementations of RequesterProtocol."""
     _URL: str
 
+    @abc.abstractmethod
     def __call__(self) -> list[Any] | dict[str, Any]: ...
 
 
@@ -34,4 +35,5 @@ class Updater(abc.ABC):
         self._requester = requester
         self._handler = handler
 
+    @abc.abstractmethod
     def __call__(self, init: bool = False) -> None: ...

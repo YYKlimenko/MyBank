@@ -1,8 +1,8 @@
 """Protocols and implementations of Assets service."""
 from typing import Any
 
-import requests
-from django.conf import settings
+import requests  # type: ignore
+from django.conf import settings  # type: ignore
 
 from ...utils import RequesterProtocol
 from ....repositories import BulkHandlerProtocol
@@ -25,7 +25,7 @@ class CurrencyUpdater:
         self._handler = handler
 
     def __call__(self, init: bool = False) -> None:
-        data = self._requester()
+        data:  = self._requester()
         data.pop('USD')
         main_currencies = {'USD': data.pop('RUB'), 'RUB': 1}
         bulk = [
