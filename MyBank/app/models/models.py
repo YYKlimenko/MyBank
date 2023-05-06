@@ -6,6 +6,7 @@ from .protocols import UserProtocol
 
 class AssetCategory(models.Model):
     name = models.CharField(max_length=10, unique=True, primary_key=True)
+    verbose_name = models.CharField(max_length=15, default='')
     description = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):
