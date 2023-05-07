@@ -14,7 +14,6 @@ class UserCrudHandler(CRUDHandler):
 
 
 class UserCounter:
-    model: UserModelProtocol
 
     def __init__(self, user_model: UserModelProtocol):
         self.model = user_model
