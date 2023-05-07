@@ -9,7 +9,7 @@ class AssetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Asset
-        fields = ('name', 'value')
+        fields = ('name', 'description', 'value', 'category_id', 'user_id')
 
 
 class CreatingUserSerializer(serializers.ModelSerializer):
