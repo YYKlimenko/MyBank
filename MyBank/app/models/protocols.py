@@ -1,5 +1,7 @@
 from typing import Protocol
 
+from django.core.exceptions import ObjectDoesNotExist
+
 
 class AssetProtocol(Protocol):
     value: float
@@ -30,6 +32,8 @@ class UserProtocol(Protocol):
 
 
 class ModelProtocol(Protocol):
+    DoesNotExist: ObjectDoesNotExist
+
     class Manager(Protocol):
         @staticmethod
         def filter(*args, **kwargs): ...
@@ -42,6 +46,9 @@ class ModelProtocol(Protocol):
 
         @staticmethod
         def bulk_update(*args, **kwargs): ...
+
+        @staticmethod
+        def only(*args, **kwargs): ...
 
     objects: Manager = Manager
 
