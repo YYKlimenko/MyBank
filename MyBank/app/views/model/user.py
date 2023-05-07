@@ -17,7 +17,7 @@ class UserSumView(PermitView):
     service: UserServiceProtocol = UserFactory.get_service()
     permission_classes = {'GET': (IsAdminUser, IsUser)}
 
-    @swagger_auto_schema(manual_parameters=[Parameter('user_id', IN_QUERY, type=TYPE_INTEGER)])
+    @swagger_auto_schema(manual_parameters=[Parameter('user_id', IN_QUERY, type=TYPE_INTEGER, required=True)])
     def get(self, request, *args, **kwargs):
         return JsonResponse(self.service.counter.get_sum(user_id=request.query_params.get('user_id')))
 
