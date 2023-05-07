@@ -7,6 +7,7 @@ from app.factories import UserFactory
 from app.permissions import IsUser
 from app.serializers import UserSerializer
 from app.serializers.model import CreatingUserSerializer
+from app.serializers.protocols import SerializerProtocol
 from app.services import UserServiceProtocol
 from app.views.base import PermitView, BaseView
 
@@ -23,8 +24,8 @@ class UserSumView(PermitView):
 
 class UserCRUDView(BaseView):
     """The view class to make CRUD operations with the User model."""
-    get_serializer = UserSerializer
-    post_serializer = CreatingUserSerializer
+    get_serializer: SerializerProtocol = UserSerializer
+    post_serializer: SerializerProtocol = CreatingUserSerializer
     service: UserServiceProtocol = UserFactory.get_service()
     permission_classes = {
         'GET': (IsAdminUser, IsUser), 'PUT': (IsAdminUser, IsUser), 'DELETE': (IsAdminUser, IsUser)

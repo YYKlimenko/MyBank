@@ -10,3 +10,4 @@ MyBank/app/migrations/000*
 MyBank/static
 *.env
 frontend
+logging/

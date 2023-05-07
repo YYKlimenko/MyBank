@@ -6,14 +6,15 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from app.factories import AccountFactory
 from app.permissions import IsUser
 from app.serializers import AccountSerializer, CreatingAccountSerializer
+from app.serializers.protocols import SerializerProtocol
 from app.services import ServiceProtocol
 from app.views import BaseView
 
 
 class AccountView(BaseView):
     """The view class for the Account model."""
-    get_serializer = AccountSerializer
-    post_serializer = CreatingAccountSerializer
+    get_serializer: SerializerProtocol = AccountSerializer
+    post_serializer: SerializerProtocol = CreatingAccountSerializer
     service: ServiceProtocol = AccountFactory.get_service()
     permission_classes = {
         'GET': (IsAdminUser, IsUser),

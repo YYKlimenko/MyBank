@@ -9,6 +9,7 @@ from app.factories import PropertyFactory
 from app.permissions import IsUser, IsRelationUser
 from app.serializers import PropertySerializer, CreatingPropertySerializer
 from app.serializers.model import UpdatingPropertySerializer
+from app.serializers.protocols import SerializerProtocol
 from app.services import ServiceProtocol
 from app.views import BaseView
 
@@ -18,8 +19,8 @@ logger = logging.getLogger(__name__)
 
 class PropertyView(BaseView):
     """The view class for the Property model."""
-    get_serializer = PropertySerializer
-    post_serializer = CreatingPropertySerializer
+    get_serializer: SerializerProtocol = PropertySerializer
+    post_serializer: SerializerProtocol = CreatingPropertySerializer
     service: ServiceProtocol = PropertyFactory.get_service()
     permission_classes = {
         'GET': (IsAdminUser, IsUser),
