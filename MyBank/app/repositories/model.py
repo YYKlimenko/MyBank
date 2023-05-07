@@ -6,7 +6,7 @@ from app.models.protocols import UserModelProtocol
 from app.repositories import CRUDHandler
 
 
-class UserCrudHandler(CRUDHandler):
+class UserCRUDHandler(CRUDHandler):
     model: UserModelProtocol
 
     def post(self, **fields) -> None:

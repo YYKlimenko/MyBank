@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from app.repositories.model import UserCrudHandler
+from app.repositories.model import UserCRUDHandler
 from app.serializers.model import CreatingUserSerializer, UserSerializer
 from app.serializers.protocols import SerializerProtocol
 
@@ -28,7 +28,7 @@ class TestUserCRUDHandler(TestCase):
         user.save()
 
         cls.user_model = user_model
-        cls.user_crud_handler = UserCrudHandler(get_user_model())
+        cls.user_crud_handler = UserCRUDHandler(get_user_model())
         cls.get_serializer: SerializerProtocol = UserSerializer
         cls.post_serializer: SerializerProtocol = CreatingUserSerializer
 
