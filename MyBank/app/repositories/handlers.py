@@ -25,7 +25,7 @@ class BulkHandlerProtocol(Protocol):
     def create(self, bulk: list[Any]) -> None:
         ...
 
-    def update(self, bulk: list[Any]) -> None:
+    def update(self, bulk: dict[str, Any], fields: list[str]) -> None:
         ...
 
 
