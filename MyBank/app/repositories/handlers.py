@@ -2,6 +2,7 @@
 from typing import Any, Protocol
 
 from app.models.protocols import ModelProtocol
+from app.repositories.exceptions import FieldError
 from app.serializers.protocols import SerializerProtocol
 
 
@@ -61,13 +62,19 @@ class BulkHandler:
         self.model = model
 
     def create(self, bulk: list[Any]) -> None:
-        self.model.objects.bulk_create([self.model(**kwargs) for kwargs in bulk])
+        try:
+            self.model.objects.bulk_create([self.model(**kwargs) for kwargs in bulk])
+        except (ValueError, TypeError) as exception:
+            raise FieldError(message=exception) from exception
 
     def update(self, bulk: dict[str, Any], fields: list[str]) -> None:
-        self.model.objects.bulk_update(
-            [self.model(pk=key, **bulk[key]) for key in bulk],
-            fields,
-        )
+        try:
+            self.model.objects.bulk_update(
+                [self.model(pk=key, **bulk[key]) for key in bulk],
+                fields,
+            )
+        except (ValueError, TypeError) as exception:
+            raise FieldError(message=exception) from exception
 
 
 class CounterProtocol(Protocol):
