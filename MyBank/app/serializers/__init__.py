@@ -1,4 +1,4 @@
 from .model import (
-    AccountSerializer, AssetSerializer, CreatingAccountSerializer, CreatingPropertySerializer, PropertySerializer,
-    UserSerializer
+    AccountSerializer, AssetSerializer, AssetCategorySerializer, CreatingAccountSerializer, CreatingPropertySerializer,
+    PropertySerializer, UserSerializer
 )

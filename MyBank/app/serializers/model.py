@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model  # type: ignore
 from django.contrib.auth.hashers import make_password  # type: ignore
 from rest_framework import serializers  # type: ignore
 
-from app.models import Asset, Account, Property
+from app.models import Asset, Account, Property, AssetCategory
 
 
 class AssetSerializer(serializers.ModelSerializer):
@@ -10,6 +10,13 @@ class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asset
         fields = ('name', 'description', 'value', 'category_id', 'user_id')
+
+
+class AssetCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AssetCategory
+        fields = ('name', 'verbose_name', 'description')
 
 
 class CreatingUserSerializer(serializers.ModelSerializer):
