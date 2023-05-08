@@ -1,6 +1,8 @@
 """The Base Class to handle operations with DB."""
 from typing import Any, Protocol
 
+from django.core.exceptions import FieldError as DjangoFieldError
+
 from app.models.protocols import ModelProtocol
 from app.repositories.exceptions import FieldError
 from app.serializers.protocols import SerializerProtocol
@@ -39,10 +41,13 @@ class CRUDHandler:
     def get(
             self, serializer: SerializerProtocol, many: bool = True, prefetch_all=False, **filter_fields
     ) -> dict[str, Any]:
-        instances = self.model.objects.filter(**filter_fields).select_related()
-        if prefetch_all:
-            instances = instances.prefetch_related()
-        return serializer(instances, many=True).data if many else serializer(instances[0]).data
+        try:
+            instances = self.model.objects.filter(**filter_fields).select_related()
+            if prefetch_all:
+                instances = instances.prefetch_related()
+            return serializer(instances, many=True).data if many else serializer(instances[0]).data
+        except DjangoFieldError as exception:
+            raise FieldError(message=DjangoFieldError) from exception
 
     def post(self, **fields) -> None:
         instance = self.model(**fields)
