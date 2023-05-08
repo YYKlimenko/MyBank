@@ -63,8 +63,11 @@ class BulkHandler:
     def create(self, bulk: list[Any]) -> None:
         self.model.objects.bulk_create([self.model(**kwargs) for kwargs in bulk])
 
-    def update(self, bulk: list[Any]) -> None:
-        self.model.objects.bulk_update([self.model(**kwargs) for kwargs in bulk])
+    def update(self, bulk: dict[str, Any], fields: list[str]) -> None:
+        self.model.objects.bulk_update(
+            [self.model(pk=key, **bulk[key]) for key in bulk],
+            fields,
+        )
 
 
 class CounterProtocol(Protocol):
