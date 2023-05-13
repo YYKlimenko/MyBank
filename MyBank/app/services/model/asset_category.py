@@ -1,5 +1,5 @@
 from ..base import Service
 
 
-class AssetCategoryServie(Service):
+class AssetCategoryService(Service):
     ...
