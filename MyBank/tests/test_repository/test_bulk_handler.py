@@ -24,20 +24,18 @@ class TestBulkHandler(TestCase):
         cls.get_serializer = AssetSerializer
 
     def test_bulk_create(self):
-        self.bulk_handler.create([
-            {
-                'name': 'RUB',
+        self.bulk_handler.create({
+            'RUB': {
                 'description': 'Russian Federation',
                 'value': Decimal('1.00000'),
                 'category_id': 'currency',
              },
-            {
-                'name': 'USD',
+            'USD': {
                 'description': 'The United States of America',
                 'value': Decimal('75.88000'),
                 'category_id': 'currency',
             },
-        ])
+        })
 
         assets = self.crud_handler.get(
             serializer=self.get_serializer,
@@ -99,7 +97,7 @@ class TestBulkHandler(TestCase):
 
     def test_bulk_create_with_invalid_data(self):
         with self.assertRaises(FieldError) as raised:
-            self.bulk_handler.create([{'category': 'RUB'}])
+            self.bulk_handler.create({'category': 'RUB'})
         self.assertTrue(isinstance(raised.exception, FieldError))
 
     def test_bulk_update_with_invalid_data(self):

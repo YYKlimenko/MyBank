@@ -1,5 +1,3 @@
-from _decimal import Decimal
-
 from django.test import TestCase
 
 from app.models import AssetCategory
@@ -51,7 +49,6 @@ class TestService(TestCase):
             'verbose_name': 'Валюты',
             'description': None,
         }
-        print(expected_data)
         self.assertTrue(categories == expected_data)
 
     def test_get_by_field(self):
