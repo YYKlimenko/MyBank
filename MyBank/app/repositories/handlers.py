@@ -25,7 +25,7 @@ class BulkHandlerProtocol(Protocol):
     """The protocol to make operations with bilk."""
     model: ModelProtocol
 
-    def create(self, bulk: list[Any]) -> None:
+    def create(self, bulk: dict[str, Any]) -> None:
         ...
 
     def update(self, bulk: dict[str, Any], fields: list[str]) -> None:
@@ -66,9 +66,9 @@ class BulkHandler:
     def __init__(self, model: ModelProtocol):
         self.model = model
 
-    def create(self, bulk: list[Any]) -> None:
+    def create(self, bulk: dict[str, Any]) -> None:
         try:
-            self.model.objects.bulk_create([self.model(**kwargs) for kwargs in bulk])
+            self.model.objects.bulk_create([self.model(pk=key, **bulk[key]) for key in bulk])
         except (ValueError, TypeError) as exception:
             raise FieldError(message=exception) from exception
 

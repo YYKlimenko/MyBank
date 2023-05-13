@@ -27,17 +27,20 @@ class CurrencyUpdater:
         data = self._requester()
         data.pop('USD')
         main_currencies = {'USD': data.pop('RUB'), 'RUB': 1}
-        bulk = [
-            {
-             'name': currency,
-             'value': 1 / data[currency] * main_currencies['USD'],
-             'category_id': 'currency'
-            }
+        bulk = {
+            currency:
+                {
+                    'value': 1 / data[currency] * main_currencies['USD'],
+                    'category_id': 'currency'
+                }
             for currency in data
-        ]
+        }
 
-        bulk.extend(
-            [{'name': currency, 'value': main_currencies[currency], 'category_id': 'currency'}
-             for currency in main_currencies]
+        bulk.update({
+            currency: {
+                'value': main_currencies[currency],
+                'category_id': 'currency',
+            }
+            for currency in main_currencies}
         )
-        return self._handler.create(bulk) if init else self._handler.update(bulk)
+        return self._handler.create(bulk) if init else self._handler.update(bulk, ['value'])
