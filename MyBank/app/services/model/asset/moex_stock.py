@@ -11,8 +11,9 @@ from ...utils.updater import Updater, UpdaterProtocol
 class MoexStockRequester(Requester):
     """The implementation of AbstractRequester to ge moex stocks."""
 
-    def __call__(self) -> list[Any] | dict[str, Any]:
+    def __call__(self) -> dict[str, Any]:
         currencies = requests.get(self._url).json()['marketdata']['data']
+        currencies = {instance[0]: instance[1] for instance in currencies}
         return currencies
 
 
@@ -27,9 +28,9 @@ class MoexStockUpdater(Updater):
         super().__init__(requester, handler)
         self._category_id = category_id
 
-    def __call__(self, init: bool = False) -> None:
-        bulk = [
-            {'name': stock[0], 'description': stock[0], 'value': stock[1], 'category_id': self._category_id}
-            for stock in self._requester()
-        ]
-        return self._handler.create(bulk) if init else self._handler.update(bulk)
+    def __call__(self, init: bool = False, data: dict[str, Any] | None = None) -> None:
+        data = data or self._requester()
+        data = {key: {'value': data[key], 'description': key, 'category_id': self._category_id} for key in data}
+        return self._handler.create(data) if init else self._handler.update(
+            data, ['description', 'value', 'category_id']
+        )

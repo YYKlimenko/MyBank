@@ -23,8 +23,8 @@ class CurrencyUpdater:
         self._requester = requester
         self._handler = handler
 
-    def __call__(self, init: bool = False) -> None:
-        data = self._requester()
+    def __call__(self, init: bool = False, data: dict[str, Any] | None = None) -> None:
+        data = data or self._requester()
         data.pop('USD')
         main_currencies = {'USD': data.pop('RUB'), 'RUB': 1}
         bulk = {
