@@ -12,7 +12,9 @@ class CRUDProtocol(Protocol):
     """CRUD protocol to make create, retrieve, update, delete operations."""
     model: ModelProtocol
 
-    def get(self, serializer: SerializerProtocol, many=False, prefetch_all=True, **filter_fields) -> Any: ...
+    def get(
+            self, serializer: SerializerProtocol, many=False, prefetch_all=True, **filter_fields
+    ) -> dict[str, Any] | list[dict[str, Any]]: ...
 
     def post(self, **fields) -> None: ...
 
@@ -40,7 +42,7 @@ class CRUDHandler:
 
     def get(
             self, serializer: SerializerProtocol, many: bool = True, prefetch_all=False, **filter_fields
-    ) -> dict[str, Any]:
+    ) -> dict[str, Any] | list[dict[str, Any]]:
         try:
             instances = self.model.objects.filter(**filter_fields).select_related()
             if prefetch_all:
