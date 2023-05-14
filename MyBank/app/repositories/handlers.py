@@ -1,7 +1,7 @@
 """The Base Class to handle operations with DB."""
 from typing import Any, Protocol
 
-from django.core.exceptions import FieldError as DjangoFieldError
+from django.core.exceptions import FieldError as DjangoFieldError, FieldDoesNotExist
 
 from app.models.protocols import ModelProtocol
 from app.repositories.exceptions import FieldError
@@ -57,7 +57,10 @@ class CRUDHandler:
         self.model.objects.get(pk=pk).delete()
 
     def update(self, pk: int | str, data: dict[str, Any]):
-        self.model.objects.filter(pk=pk).update(**data)
+        try:
+            self.model.objects.filter(pk=pk).update(**data)
+        except (FieldDoesNotExist, ValueError, TypeError) as exception:
+            raise FieldError(message=exception) from exception
 
 
 class BulkHandler:
@@ -78,7 +81,7 @@ class BulkHandler:
                 [self.model(pk=key, **bulk[key]) for key in bulk],
                 fields,
             )
-        except (ValueError, TypeError) as exception:
+        except (DjangoFieldError, ValueError, TypeError) as exception:
             raise FieldError(message=exception) from exception
 
 
