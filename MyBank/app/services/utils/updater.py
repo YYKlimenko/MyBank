@@ -1,6 +1,6 @@
 """Protocols and implementations of classes to request and update data."""
 from abc import ABC, abstractmethod
-from typing import Protocol
+from typing import Protocol, Any
 
 from app.repositories import BulkHandlerProtocol
 from app.services.utils import RequesterProtocol
@@ -11,7 +11,7 @@ class UpdaterProtocol(Protocol):
     _requester: RequesterProtocol
     _handler: BulkHandlerProtocol
 
-    def __call__(self, init: bool = False) -> None: ...
+    def __call__(self, init: bool = False, data: dict[str, Any] | None = None) -> None: ...
 
 
 class Updater(ABC):
