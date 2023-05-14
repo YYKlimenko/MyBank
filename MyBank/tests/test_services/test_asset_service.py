@@ -60,5 +60,3 @@ class TestService(TestCase):
         )
         currencies = {i['name']: i for i in currencies}
         self.assertTrue(all([currencies.get('USD'), currencies.get('RUB'), currencies.get('BTC')]))
-
-
