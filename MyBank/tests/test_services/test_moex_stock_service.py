@@ -17,8 +17,8 @@ class TestService(TestCase):
     def setUpTestData(cls):
         for instance in (
             AssetCategory('moex_stock', 'МосБиржа Акции'),
-            Asset(name='AAA', value=Decimal('75.5'), category_id='currency'),
-            Asset(name='BBB', value=Decimal('1.0'), category_id='currency'),
+            Asset(name='AAA', value=Decimal('75.5'), category_id='moex_stock'),
+            Asset(name='BBB', value=Decimal('1.0'), category_id='moex_stock'),
         ):
             instance.save()
         cls.service = AssetService(
@@ -32,7 +32,7 @@ class TestService(TestCase):
         cls.get_serializer = AssetSerializer
 
     def test_get_all(self):
-        currencies = self.service.crud.get(
+        instances = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
         )
@@ -41,21 +41,21 @@ class TestService(TestCase):
                 'name': 'AAA',
                 'description': None,
                 'value': '75.50000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
             {
                 'name': 'BBB',
                 'description': None,
                 'value': '1.00000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
         ]
-        self.assertTrue(currencies == expected_data)
+        self.assertTrue(instances == expected_data)
 
     def test_get_one_by_pk(self):
-        currency = self.service.crud.get(
+        instance = self.service.crud.get(
             serializer=self.get_serializer,
             many=False,
             name='AAA',
@@ -64,13 +64,13 @@ class TestService(TestCase):
                 'name': 'AAA',
                 'description': None,
                 'value': '75.50000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
         }
-        self.assertTrue(currency == expected_data)
+        self.assertTrue(instance == expected_data)
 
     def test_get_by_field(self):
-        currency = self.service.crud.get(
+        instances = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
             value='75.500',
@@ -79,10 +79,10 @@ class TestService(TestCase):
                 'name': 'AAA',
                 'description': None,
                 'value': '75.50000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
         }]
-        self.assertTrue(currency == expected_data)
+        self.assertTrue(instances == expected_data)
 
     def test_get_by_invalid_field(self):
         with self.assertRaises(FieldError) as raised:
@@ -97,10 +97,10 @@ class TestService(TestCase):
         self.service.crud.post(
             name='CCC',
             value=Decimal('700000.000'),
-            category_id='currency',
+            category_id='moex_stock',
         )
 
-        currencies = self.service.crud.get(
+        instances = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
         )
@@ -109,25 +109,25 @@ class TestService(TestCase):
                 'name': 'AAA',
                 'description': None,
                 'value': '75.50000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
             {
                 'name': 'BBB',
                 'description': None,
                 'value': '1.00000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
             {
                 'name': 'CCC',
                 'description': None,
                 'value': '700000.00000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
         ]
-        self.assertTrue(currencies == expected_data)
+        self.assertTrue(instances == expected_data)
 
     def test_update(self):
         self.service.crud.update(pk='AAA', data={'description': 'Currency of AAA'})
@@ -141,7 +141,7 @@ class TestService(TestCase):
             'name': 'AAA',
             'description': 'Currency of AAA',
             'value': '75.50000',
-            'category_id': 'currency',
+            'category_id': 'moex_stock',
             'user_id': None,
         }
         self.assertTrue(currency == expected_data)
@@ -158,14 +158,14 @@ class TestService(TestCase):
                 'name': 'AAA',
                 'description': None,
                 'value': '75.50000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
             {
                 'name': 'BBB',
                 'description': None,
                 'value': '1.00000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
         ]
@@ -194,7 +194,7 @@ class TestService(TestCase):
                     'name': 'AAA',
                     'description': None,
                     'value': '75.50000',
-                    'category_id': 'currency',
+                    'category_id': 'moex_stock',
                     'user_id': None,
                 },
             ]
@@ -202,12 +202,12 @@ class TestService(TestCase):
 
     def test_init_update(self):
         self.service.updater(init=True)
-        currencies = self.service.crud.get(
+        instances = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
         )
-        currencies = {i['name']: i for i in currencies}
-        self.assertTrue(all([currencies.get('USD'), currencies.get('RUB'), currencies.get('BTC')]))
+        currencies = {i['name']: i for i in instances}
+        self.assertTrue(all([currencies.get('SBER'), currencies.get('BELU'), currencies.get('GAZP')]))
 
     def test_update_without_init(self):
         self.service.updater()
@@ -220,31 +220,31 @@ class TestService(TestCase):
                 'name': 'AAA',
                 'description': None,
                 'value': '75.50000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
             {
                 'name': 'BBB',
                 'description': None,
                 'value': '1.00000',
-                'category_id': 'currency',
+                'category_id': 'moex_stock',
                 'user_id': None,
             },
         ])
 
     def test_init_update_and_update_again(self):
-        self.service.updater(init=True)
+        self.service.updater(init=True, data={'SBER': Decimal('235'), 'BELU': Decimal('132'), 'GAZP': Decimal('99.00')})
         currencies = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
         )
         currencies = {i['name']: i for i in currencies}
-        self.assertTrue(all([currencies.get('USD'), currencies.get('RUB'), currencies.get('BTC')]))
+        self.assertTrue(all([currencies.get('SBER'), currencies.get('BELU'), currencies.get('GAZP')]))
 
-        self.service.updater()
+        self.service.updater(data={'SBER': Decimal('532'), 'BELU': Decimal('321'), 'GAZP': Decimal('98.00')})
         currencies = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
         )
         currencies = {i['name']: i for i in currencies}
-        self.assertTrue(all([currencies.get('USD'), currencies.get('RUB'), currencies.get('BTC')]))
+        self.assertTrue(all([currencies.get('SBER'), currencies.get('BELU'), currencies.get('GAZP')]))
