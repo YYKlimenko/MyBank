@@ -13,6 +13,9 @@ class CurrencyRequester(Requester):
 
     def __call__(self) -> list[Any] | dict[str, Any]:
         currencies = requests.get(self._url).json()['rates']
+        main_currencies = {'USD': currencies.pop('RUB'), 'RUB': currencies.pop('USD')}
+        currencies = {currency: 1 / currencies[currency] * main_currencies['USD'] for currency in currencies}
+        currencies.update(main_currencies)
         return currencies
 
 
@@ -25,22 +28,12 @@ class CurrencyUpdater:
 
     def __call__(self, init: bool = False, data: dict[str, Any] | None = None) -> None:
         data = data or self._requester()
-        data.pop('USD')
-        main_currencies = {'USD': data.pop('RUB'), 'RUB': 1}
         bulk = {
             currency:
                 {
-                    'value': 1 / data[currency] * main_currencies['USD'],
+                    'value': data[currency],
                     'category_id': 'currency'
                 }
             for currency in data
         }
-
-        bulk.update({
-            currency: {
-                'value': main_currencies[currency],
-                'category_id': 'currency',
-            }
-            for currency in main_currencies}
-        )
         return self._handler.create(bulk) if init else self._handler.update(bulk, ['value'])
