@@ -199,22 +199,13 @@ class TestService(TestCase):
             ]
         )
 
-    def test_init_update(self):
-        self.service.updater(init=True)
+    def test_init_update_and_update_again(self):
+        self.service.updater(init=True, data={'CNY': Decimal('12.00000')})
         currencies = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
         )
-        currencies = {i['name']: i for i in currencies}
-        self.assertTrue(all([currencies.get('USD'), currencies.get('RUB'), currencies.get('BTC')]))
-
-    def test_update_without_init(self):
-        self.service.updater()
-        currencies = self.service.crud.get(
-            serializer=self.get_serializer,
-            many=True,
-        )
-        self.assertTrue(currencies == [
+        expected_data = [
             {
                 'name': 'AAA',
                 'description': None,
@@ -229,21 +220,42 @@ class TestService(TestCase):
                 'category_id': 'currency',
                 'user_id': None,
             },
-        ])
+            {
+                'name': 'CNY',
+                'description': None,
+                'value': '12.00000',
+                'category_id': 'currency',
+                'user_id': None,
+            },
+        ]
+        self.assertTrue(currencies == expected_data)
 
-    def test_init_update_and_update_again(self):
-        self.service.updater(init=True)
+        self.service.updater(data={'AAA': '999.99999'})
         currencies = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
         )
-        currencies = {i['name']: i for i in currencies}
-        self.assertTrue(all([currencies.get('USD'), currencies.get('RUB'), currencies.get('BTC')]))
-
-        self.service.updater()
-        currencies = self.service.crud.get(
-            serializer=self.get_serializer,
-            many=True,
-        )
-        currencies = {i['name']: i for i in currencies}
-        self.assertTrue(all([currencies.get('USD'), currencies.get('RUB'), currencies.get('BTC')]))
+        expected_data = [
+            {
+                'name': 'AAA',
+                'description': None,
+                'value': '999.99999',
+                'category_id': 'currency',
+                'user_id': None,
+            },
+            {
+                'name': 'BBB',
+                'description': None,
+                'value': '1.00000',
+                'category_id': 'currency',
+                'user_id': None,
+            },
+            {
+                'name': 'CNY',
+                'description': None,
+                'value': '12.00000',
+                'category_id': 'currency',
+                'user_id': None,
+            },
+        ]
+        self.assertTrue(currencies == expected_data)

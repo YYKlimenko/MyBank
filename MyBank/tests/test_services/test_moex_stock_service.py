@@ -233,18 +233,71 @@ class TestService(TestCase):
         ])
 
     def test_init_update_and_update_again(self):
-        self.service.updater(init=True, data={'SBER': Decimal('235'), 'BELU': Decimal('132'), 'GAZP': Decimal('99.00')})
-        currencies = self.service.crud.get(
-            serializer=self.get_serializer,
-            many=True,
-        )
-        currencies = {i['name']: i for i in currencies}
-        self.assertTrue(all([currencies.get('SBER'), currencies.get('BELU'), currencies.get('GAZP')]))
+        self.service.updater(init=True, data={'SBER': '235', 'BELU': '100'})
+        instances = self.service.crud.get(many=True, serializer=self.get_serializer)
+        expected_data = [
+            {
+                'name': 'AAA',
+                'description': None,
+                'value': '75.50000',
+                'category_id': 'moex_stock',
+                'user_id': None,
+            },
+            {
+                'name': 'BBB',
+                'description': None,
+                'value': '1.00000',
+                'category_id': 'moex_stock',
+                'user_id': None,
+            },
+            {
+                'name': 'SBER',
+                'description': 'SBER',
+                'value': '235.00000',
+                'category_id': 'moex_stock',
+                'user_id': None,
+            },
+            {
+                'name': 'BELU',
+                'description': 'BELU',
+                'value': '100.00000',
+                'category_id': 'moex_stock',
+                'user_id': None,
+            },
+        ]
 
-        self.service.updater(data={'SBER': Decimal('532'), 'BELU': Decimal('321'), 'GAZP': Decimal('98.00')})
-        currencies = self.service.crud.get(
-            serializer=self.get_serializer,
-            many=True,
-        )
-        currencies = {i['name']: i for i in currencies}
-        self.assertTrue(all([currencies.get('SBER'), currencies.get('BELU'), currencies.get('GAZP')]))
+        self.assertTrue(instances == expected_data)
+        self.service.updater(data={'SBER': '100', 'BELU': '235'})
+
+        expected_data = [
+            {
+                'name': 'AAA',
+                'description': None,
+                'value': '75.50000',
+                'category_id': 'moex_stock',
+                'user_id': None,
+            },
+            {
+                'name': 'BBB',
+                'description': None,
+                'value': '1.00000',
+                'category_id': 'moex_stock',
+                'user_id': None,
+            },
+            {
+                'name': 'SBER',
+                'description': 'SBER',
+                'value': '100.00000',
+                'category_id': 'moex_stock',
+                'user_id': None,
+            },
+            {
+                'name': 'BELU',
+                'description': 'BELU',
+                'value': '235.00000',
+                'category_id': 'moex_stock',
+                'user_id': None,
+            },
+        ]
+        instances = self.service.crud.get(many=True, serializer=self.get_serializer)
+        self.assertTrue(instances == expected_data)
