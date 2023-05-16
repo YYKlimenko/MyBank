@@ -12,6 +12,7 @@ from ..services import (
     AssetServiceProtocol, RequesterProtocol, UpdaterProtocol, AssetService,
     CurrencyRequester, CurrencyUpdater
 )
+from ..services.model.asset.moex_stock import MoexUpdaterProtocol
 from ..services.utils import Requester, Updater
 from ..services.model import MoexStockRequester, MoexStockUpdater
 
@@ -24,12 +25,6 @@ class AssetFactoryProtocol(FactoryProtocol, Protocol):
     _updater_class = Type[Updater]
     _updater: UpdaterProtocol
     _url: str
-
-    @classmethod
-    def get_requester(cls) -> RequesterProtocol: ...
-
-    @classmethod
-    def get_updater(cls) -> UpdaterProtocol: ...
 
     @classmethod
     def get_service(cls) -> AssetServiceProtocol: ...
@@ -48,16 +43,17 @@ class AssetFactory(Factory):
     @classmethod
     def get_updater(cls) -> UpdaterProtocol:
         if cls._updater is None:
-            cls._updater = cls._updater_class(
-                cls._requester_class(cls._url),
-                cls._bulk_handler_class(cls._model)
-            )
+            cls._updater = cls._updater_class(cls._bulk_handler_class(cls._model))
         return cls._updater
 
     @classmethod
     def get_service(cls) -> AssetServiceProtocol:
         if cls._service is None:
-            cls._service = cls._service_class(cls.get_crud_handler(), cls.get_updater())
+            cls._service = cls._service_class(
+                cls.get_crud_handler(),
+                cls.get_updater(),
+                cls._requester_class(cls._url)
+            )
         return cls._service
 
 
@@ -70,13 +66,13 @@ class CurrencyFactory(AssetFactory):
 class MoexFactory(AssetFactory):
     _requester_class: Type[MoexStockRequester] = MoexStockRequester
     _updater_class: Type[MoexStockUpdater] = MoexStockUpdater
+    _updater: MoexUpdaterProtocol | None = None
     _category_id: str
 
     @classmethod
-    def get_updater(cls) -> UpdaterProtocol:
+    def get_updater(cls) -> MoexUpdaterProtocol:
         if cls._updater is None:
             cls._updater = cls._updater_class(
-                cls._requester_class(cls._url),
                 cls._bulk_handler_class(cls._model),
                 cls._category_id
             )

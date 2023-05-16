@@ -24,12 +24,11 @@ class MoexUpdaterProtocol(UpdaterProtocol, Protocol):
 class MoexStockUpdater(Updater):
     """The implementation of AbstractUpdater to update moex stocks."""
 
-    def __init__(self, requester: RequesterProtocol, handler: BulkHandlerProtocol, category_id: str):
-        super().__init__(requester, handler)
+    def __init__(self, handler: BulkHandlerProtocol, category_id: str):
+        super().__init__(handler)
         self._category_id = category_id
 
-    def __call__(self, init: bool = False, data: dict[str, Any] | None = None) -> None:
-        data = data or self._requester()
+    def __call__(self, data: dict[str, Any] | None, init: bool = False, ) -> None:
         data = {key: {'value': data[key], 'description': key, 'category_id': self._category_id} for key in data}
         return self._handler.create(data) if init else self._handler.update(
             data, ['description', 'value', 'category_id']

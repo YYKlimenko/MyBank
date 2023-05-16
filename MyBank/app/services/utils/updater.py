@@ -3,23 +3,20 @@ from abc import ABC, abstractmethod
 from typing import Protocol, Any
 
 from app.repositories import BulkHandlerProtocol
-from app.services.utils import RequesterProtocol
 
 
 class UpdaterProtocol(Protocol):
     """The protocol to implement in Updater classes."""
-    _requester: RequesterProtocol
     _handler: BulkHandlerProtocol
 
-    def __call__(self, init: bool = False, data: dict[str, Any] | None = None) -> None: ...
+    def __call__(self, data: dict[str, Any], init: bool = False) -> None: ...
 
 
 class Updater(ABC):
     """The abstract class to use in implementations of UpdaterProtocol."""
 
-    def __init__(self, requester: RequesterProtocol, handler: BulkHandlerProtocol):
-        self._requester = requester
+    def __init__(self, handler: BulkHandlerProtocol):
         self._handler = handler
 
     @abstractmethod
-    def __call__(self, init: bool = False) -> None: ...
+    def __call__(self, data: dict[str, Any], init: bool = False) -> None: ...

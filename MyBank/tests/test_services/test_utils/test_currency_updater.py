@@ -18,10 +18,7 @@ class TestService(TestCase):
             AssetCategory('currency', 'Валюты'),
         ):
             instance.save()
-        cls.updater = CurrencyUpdater(
-            CurrencyRequester(url=settings.CURRENCIES_API_URL),
-            BulkHandler(Asset),  # type: ignore
-        )
+        cls.updater = CurrencyUpdater(BulkHandler(Asset))  # type: ignore
         cls.crud_handler = CRUDHandler(Asset)  # type: ignore
         cls.serializer = AssetSerializer
 

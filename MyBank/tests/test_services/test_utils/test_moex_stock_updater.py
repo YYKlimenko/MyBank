@@ -16,7 +16,6 @@ class TestService(TestCase):
         instance.save()
         requester = MoexStockRequester(url=settings.MOEX_STOCK_API_URL)
         cls.updater = MoexStockUpdater(
-            requester,
             BulkHandler(Asset),  # type: ignore
             category_id='moex_stock'
         )

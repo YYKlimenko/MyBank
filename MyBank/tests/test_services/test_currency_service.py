@@ -24,9 +24,9 @@ class TestService(TestCase):
         cls.service = AssetService(
             CRUDHandler(Asset),  # type: ignore
             CurrencyUpdater(
-                CurrencyRequester(settings.CURRENCIES_API_URL),
                 BulkHandler(Asset)  # type: ignore
             ),
+            CurrencyRequester(settings.CURRENCIES_API_URL),
         )
         cls.get_serializer = AssetSerializer
 
@@ -200,7 +200,7 @@ class TestService(TestCase):
         )
 
     def test_init_update_and_update_again(self):
-        self.service.updater(init=True, data={'CNY': Decimal('12.00000')})
+        self.service.update(init=True, data={'CNY': Decimal('12.00000')})
         currencies = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
@@ -230,7 +230,7 @@ class TestService(TestCase):
         ]
         self.assertTrue(currencies == expected_data)
 
-        self.service.updater(data={'AAA': '999.99999'})
+        self.service.update(data={'AAA': '999.99999'})
         currencies = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,

@@ -22,12 +22,10 @@ class CurrencyRequester(Requester):
 class CurrencyUpdater:
     """The implementation of AbstractUpdater for Currencies."""
 
-    def __init__(self, requester: RequesterProtocol, handler: BulkHandlerProtocol):
-        self._requester = requester
+    def __init__(self, handler: BulkHandlerProtocol):
         self._handler = handler
 
-    def __call__(self, init: bool = False, data: dict[str, Any] | None = None) -> None:
-        data = data or self._requester()
+    def __call__(self, data: dict[str, Any], init: bool = False) -> None:
         bulk = {
             currency:
                 {

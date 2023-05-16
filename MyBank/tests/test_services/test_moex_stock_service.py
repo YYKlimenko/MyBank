@@ -24,10 +24,10 @@ class TestService(TestCase):
         cls.service = AssetService(
             CRUDHandler(Asset),  # type: ignore
             MoexStockUpdater(
-                MoexStockRequester(settings.MOEX_STOCK_API_URL),
                 BulkHandler(Asset),  # type: ignore
                 'moex_stock'
             ),
+            MoexStockRequester(settings.MOEX_STOCK_API_URL),
         )
         cls.get_serializer = AssetSerializer
 
@@ -200,17 +200,8 @@ class TestService(TestCase):
             ]
         )
 
-    def test_init_update(self):
-        self.service.updater(init=True)
-        instances = self.service.crud.get(
-            serializer=self.get_serializer,
-            many=True,
-        )
-        currencies = {i['name']: i for i in instances}
-        self.assertTrue(all([currencies.get('SBER'), currencies.get('BELU'), currencies.get('GAZP')]))
-
     def test_update_without_init(self):
-        self.service.updater()
+        self.service.update(data={})
         currencies = self.service.crud.get(
             serializer=self.get_serializer,
             many=True,
@@ -233,7 +224,7 @@ class TestService(TestCase):
         ])
 
     def test_init_update_and_update_again(self):
-        self.service.updater(init=True, data={'SBER': '235', 'BELU': '100'})
+        self.service.update(init=True, data={'SBER': '235', 'BELU': '100'})
         instances = self.service.crud.get(many=True, serializer=self.get_serializer)
         expected_data = [
             {
@@ -267,7 +258,7 @@ class TestService(TestCase):
         ]
 
         self.assertTrue(instances == expected_data)
-        self.service.updater(data={'SBER': '100', 'BELU': '235'})
+        self.service.update(data={'SBER': '100', 'BELU': '235'})
 
         expected_data = [
             {
